@@ -8,6 +8,10 @@
   ansible.builtin.import_role:
     name: "ansible-openwrt"
 
+- name: "[Main] - Manage back-up"
+  ansible.builtin.include_tasks: "back_up.yaml"
+  when: openwrt_back_up_enabled
+
 - name: "[Main] - Update image"
   ansible.builtin.include_tasks: "update_version.yaml"
 

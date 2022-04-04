@@ -12,5 +12,9 @@ openwrt_enabled_services: []
 openwrt_installed_packages: []
 openwrt_uninstalled_packages: []
 
+# Back-up
+openwrt_back_up_enabled: true
+openwrt_back_up_local_dir: "{{ undef(hint='Please provide a directory to store your back-ups') }}"
+
 # Other
 openwrt_ssh_public_key: ~
