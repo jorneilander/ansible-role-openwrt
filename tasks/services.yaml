@@ -1,0 +1,16 @@
+---
+# Ensure services are managed
+- name: "[Services] - Enable services"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop: "{{ openwrt_enabled_services }}"
+
+- name: "[Services] - Disable services"
+  failed_when: false
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+  loop: "{{ openwrt_disabled_services }}"

@@ -1,0 +1,21 @@
+---
+- name: "[Main] - Fail when no facts available"
+  ansible.builtin.fail:
+    msg: "Ensure you run this role in a playbook with 'gather_facts: true'"
+  when: ansible_facts.keys() | length == 0
+
+- name: "[Main] - Apply monkey patch role"
+  ansible.builtin.import_role:
+    name: "ansible-openwrt"
+
+- name: "[Main] - Update image"
+  ansible.builtin.include_tasks: "update_version.yaml"
+
+- name: "[Main] - Add SSH public key"
+  ansible.builtin.include_tasks: "ssh_add_keys.yaml"
+
+- name: "[Main] - Manage packages"
+  ansible.builtin.include_tasks: "packages.yaml"
+
+- name: "[Main] - Manage services"
+  ansible.builtin.include_tasks: "services.yaml"

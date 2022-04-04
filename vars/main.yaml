@@ -1,0 +1,16 @@
+---
+# Device configuration
+openwrt_id: ~
+openwrt_platform: ~
+openwrt_version: ~
+
+# Packages
+openwrt_disabled_services: []
+openwrt_enabled_services: []
+
+# Services
+openwrt_installed_packages: []
+openwrt_uninstalled_packages: []
+
+# Other
+openwrt_ssh_public_key: ~

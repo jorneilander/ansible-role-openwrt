@@ -1,0 +1,83 @@
+---
+# Check for latest stable and verify with version installed
+- name: "[Version] - Download latest version information for device"
+  check_mode: false
+  ansible.builtin.uri:
+    url: "{{ openwrt_firmware_selector_url }}"
+  delegate_to: localhost
+  register: firmware_selector_device_metadata
+
+- name: "[Version] - Set fact for version code ({{ openwrt_version }})"
+  check_mode: false
+  ansible.builtin.set_fact:
+    openwrt_version_code: "{{ firmware_selector_device_metadata.json | json_query(query) }}"
+  vars:
+    query: "version_code"
+
+- name: "[Version] - Get currently installed version code"
+  check_mode: false
+  changed_when: false
+  ansible.builtin.shell:
+    cmd:
+      grep BUILD_ID /etc/os-release | cut -d '=' -f 2 | tr -d '"'
+  register:
+    openwrt_current_version_code
+
+- name: "[Version] - Show versions"
+  ansible.builtin.debug:
+    msg: |
+      Current version: {{ openwrt_current_version_code.stdout }}
+      Latest version:  {{ openwrt_version_code }}
+
+- name: "[Version] - Patch OpenWRT"
+  when: openwrt_version_code != openwrt_current_version_code.stdout
+  block:
+    - name: "[Version] - Set download file"
+      ansible.builtin.set_fact:
+        openwrt_download_file_name:
+          "{{ firmware_selector_device_metadata.json | json_query(file_query) }}"
+      vars:
+        file_query: "images[?type=='sysupgrade'] | [0] | name"
+
+    - name: "[Version] - Download latest version"
+      ansible.builtin.get_url:
+        url: "{{ openwrt_download_url_prefix }}/{{ openwrt_platform }}/{{ openwrt_download_file_name }}"
+        dest: "/tmp/{{ openwrt_download_file_name }}"
+        mode: 0664
+      delegate_to: localhost
+      register: openwrt_download
+
+    - name: "[Version] - Ensure any previous upgrade file doesn't exist"
+      ansible.builtin.file:
+        path: "{{ openwrt_sysupgrade_file_path }}"
+        state: absent
+
+    - name: "[Version] - Copy file to device"
+      ansible.builtin.copy:
+        src: "{{ openwrt_download.dest }}"
+        dest: "{{ openwrt_sysupgrade_file_path }}"
+        mode: 0644
+
+    - name: "[Version] - Upgrade device"
+      nohup:
+        command: "sysupgrade -v {{ openwrt_sysupgrade_file_path }}"
+
+    - name: "[Version] - Wait for device"
+      ansible.builtin.wait_for_connection:
+        connect_timeout: 10
+        sleep: 5
+        delay: 5
+        timeout: 600
+
+    - name: "[Version] - Check new version of device"
+      changed_when: false
+      ansible.builtin.shell:
+        cmd:
+          grep BUILD_ID /etc/os-release | cut -d '=' -f 2 | tr -d '"'
+      register:
+        openwrt_new_version_code
+
+    - name: "[Version] - Fail when not patched"
+      when: openwrt_new_version_code == openwrt_current_version_code
+      ansible.builtin.fail:
+        msg: "OpenWRT was not properly patched, this happens. Please re-run the playbook."

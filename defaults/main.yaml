@@ -1,0 +1,26 @@
+---
+# defaults file for openwrt
+openwrt_download_fqdn: downloads.openwrt.org
+openwrt_download_url_prefix: >-
+  {%- if openwrt_version == 'SNAPSHOT' -%}
+    https://{{ openwrt_download_fqdn }}/snapshots/targets/
+  {%- else -%}
+    https://{{ openwrt_download_fqdn }}/releases/{{ openwrt_version }}/targets
+  {%- endif -%}
+
+# Firmware selector can be hosted on other platforms
+openwrt_firmware_selector_protocol: "https"
+openwrt_firmware_selector_fqdn: "firmware-selector.openwrt.org"
+openwrt_firmware_selector_endpoint: "/data"
+openwrt_firmware_selector_arguments:
+  "{{ openwrt_version }}/{{ openwrt_platform }}/{{ openwrt_id }}"
+openwrt_firmware_selector_url: |
+  {{ openwrt_firmware_selector_protocol       + "://"
+   + openwrt_firmware_selector_fqdn           + "/"
+   + openwrt_firmware_selector_endpoint       + "/"
+   + openwrt_firmware_selector_arguments }}.json
+
+openwrt_image_file_path: /tmp/sysupgrade.bin
+
+# Bunch of default locations
+openwrt_dropbear_authorized_keys_path: "/etc/dropbear/authorized_keys"
