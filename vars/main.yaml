@@ -1,8 +1,8 @@
 ---
 # Device configuration
-openwrt_id: ~
-openwrt_platform: ~
-openwrt_version: ~
+openwrt_id: "{{ undef(hint='Please provide your device id found on OpenWRT Firmware Selector') }}"
+openwrt_platform: "{{ undef(hint='Please provide your device platform found on OpenWRT Firmware Selector') }}"
+openwrt_version: "{{ undef(hint='Please provide the OpenWRT to be installed on your device') }}"
 
 # Packages
 openwrt_disabled_services: []
