@@ -20,7 +20,7 @@ openwrt_firmware_selector_url: |
    + openwrt_firmware_selector_endpoint       + "/"
    + openwrt_firmware_selector_arguments }}.json
 
-openwrt_image_file_path: /tmp/sysupgrade.bin
+openwrt_sysupgrade_file_path: /tmp/sysupgrade.bin
 
 # Bunch of default locations
 openwrt_dropbear_authorized_keys_path: "/etc/dropbear/authorized_keys"
