@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Correct variable name for sysupgrade file path in defaults
+- Clarified currently installed version for OpenWRT version output
 
 ## [0.0.2] - 2022-04-04
 

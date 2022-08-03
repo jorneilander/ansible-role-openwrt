@@ -26,8 +26,8 @@
 - name: "[Version] - Show versions"
   ansible.builtin.debug:
     msg: |
-      Current version: {{ openwrt_current_version_code.stdout }}
-      Latest version:  {{ openwrt_version_code }}
+      Installed version: {{ openwrt_current_version_code.stdout }}
+      Latest version:    {{ openwrt_version_code }}
 
 - name: "[Version] - Patch OpenWRT"
   when: openwrt_version_code != openwrt_current_version_code.stdout
