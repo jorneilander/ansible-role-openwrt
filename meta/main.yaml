@@ -7,15 +7,13 @@ galaxy_info:
 
   issue_tracker_url: https://github.com/jorneilander/ansible-role-openwrt/issues
   license: Apache-2.0
-  min_ansible_version: 2.1
+  min_ansible_version: "2.1"
 
   platforms:
-    - {
-      name: "openwrt"
-    }
+    - name: "openwrt"
 
   galaxy_tags:
     - openwrt
 
 dependencies:
-  - gekmihesg.openwrt
+  - role: gekmihesg.openwrt
