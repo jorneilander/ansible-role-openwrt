@@ -1,4 +1,19 @@
 ---
+- name: "[Version] - Get latest version of OpenWRT"
+  when: openwrt_version == "latest"
+  block:
+  - name: "[Version] - Download version information from OpenWRT"
+    ansible.builtin.uri:
+      url: "{{ openwrt_sysupgrade_version_url }}"
+    delegate_to: localhost
+    register: openwrt_version_metadata
+
+  - name: "[Version] - Set latest OpenWRT version fact"
+    ansible.builtin.set_fact:
+      openwrt_version: "{{ openwrt_version_metadata.json | json_query(query) }}"
+    vars:
+      query: "latest[0]"
+
 - name: "[Version] - Show OpenWRT version to be installed"
   ansible.builtin.debug:
     msg: "Installing OpenWRT version: {{ openwrt_version }}"

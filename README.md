@@ -12,18 +12,18 @@ Otherwise [`gekmihesg.openwrt`](https://galaxy.ansible.com/gekmihesg/openwrt) wi
 
 ## Role Variables
 
-| Variable                       | type      | default | example                                              | description                                                                                                                  |
-| ------------------------------ | --------- | ------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `openwrt_version`              | `string`  | `~`     | `"SNAPSHOT"`                                         | OpenWRT version to be installed. Use `SNAPSHOT` if there are no versioned builds.                                            |
-| `openwrt_platform`             | `string`  | `~`     | `"realtek/rtl838x"`                                  | OpenWRT platform for your device. Check [OpenWRT Firmware Selector](https://firmware-selector.openwrt.org/) for your device. |
-| `openwrt_id`                   | `string`  | `~`     | `"netgear_gs308t-v1"`                                | OpenWRT id for your device. Check [OpenWRT Firmware Selector](https://firmware-selector.openwrt.org/) for your device.       |
-| `openwrt_disabled_services`    | `list`    | `[]`    | `["odhcpd", "dnsmasq"]`                              | List of services to be disabled on your device.                                                                              |
-| `openwrt_enabled_services`     | `list`    | `[]`    | `["acme", "uhttpd", "prometheus-node-exporter-lua"]` | List of services to be enabled on your device.                                                                               |
-| `openwrt_installed_packages`   | `list`    | `[]`    | `["acme", luci", "luci-app-acme", "wpad-wolfssl"]`   | List of packages to be installed on your device.                                                                             |
-| `openwrt_uninstalled_packages` | `list`    | `[]`    | `["wpad-basic-wolfssl"]`                             | List of packages to uninstalled on your device.                                                                              |
-| `openwrt_ssh_public_key`       | `string`  | `~`     | `"ssh-rsa AAAAB3N...f6f+K8="`                        | SSH public-key to be added to the list of Dropbear authored keys.                                                            |
-| `openwrt_back_up_enabled`      | `boolean` | `true`  | `true`                                               | Create back-up of the OpenWRT configuration before updating.                                                                 |
-| `openwrt_back_up_local_dir`    | `string`  | `~`     | `"~/Downloads"`                                      | Directory on your local machine to store back-ups.                                                                           |
+| Variable                       | type      | default  | example                                              | description                                                                                                                        |
+| ------------------------------ | --------- | -------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `openwrt_version`              | `string`  | `latest` | `"SNAPSHOT"`                                         | OpenWRT version to be installed. Use `SNAPSHOT` if there are no versioned builds. Defaults to latest version of OpenWRT available. |
+| `openwrt_platform`             | `string`  | `~`      | `"realtek/rtl838x"`                                  | OpenWRT platform for your device. Check [OpenWRT Firmware Selector](https://firmware-selector.openwrt.org/) for your device.       |
+| `openwrt_id`                   | `string`  | `~`      | `"netgear_gs308t-v1"`                                | OpenWRT id for your device. Check [OpenWRT Firmware Selector](https://firmware-selector.openwrt.org/) for your device.             |
+| `openwrt_disabled_services`    | `list`    | `[]`     | `["odhcpd", "dnsmasq"]`                              | List of services to be disabled on your device.                                                                                    |
+| `openwrt_enabled_services`     | `list`    | `[]`     | `["acme", "uhttpd", "prometheus-node-exporter-lua"]` | List of services to be enabled on your device.                                                                                     |
+| `openwrt_installed_packages`   | `list`    | `[]`     | `["acme", luci", "luci-app-acme", "wpad-wolfssl"]`   | List of packages to be installed on your device.                                                                                   |
+| `openwrt_uninstalled_packages` | `list`    | `[]`     | `["wpad-basic-wolfssl"]`                             | List of packages to uninstalled on your device.                                                                                    |
+| `openwrt_ssh_public_key`       | `string`  | `~`      | `"ssh-rsa AAAAB3N...f6f+K8="`                        | SSH public-key to be added to the list of Dropbear authored keys.                                                                  |
+| `openwrt_back_up_enabled`      | `boolean` | `true`   | `true`                                               | Create back-up of the OpenWRT configuration before updating.                                                                       |
+| `openwrt_back_up_local_dir`    | `string`  | `~`      | `"~/Downloads"`                                      | Directory on your local machine to store back-ups.                                                                                 |
 
 ## Dependencies
 
@@ -42,7 +42,7 @@ My thanks to [gekmihesg](https://github.com/gekmihesg)!
       ansible.builtin.import_role:
         name: openwrt
       vars:
-        openwrt_version: "21.02.2"
+        openwrt_version: "latest"
         openwrt_platform: "ramips/mt7621"
         openwrt_id: "xiaomi_mi-router-ac2100"
         openwrt_disabled_services:

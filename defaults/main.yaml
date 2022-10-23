@@ -8,6 +8,14 @@ openwrt_download_url_prefix: >-
     https://{{ openwrt_download_fqdn }}/releases/{{ openwrt_version }}/targets
   {%- endif -%}
 
+openwrt_sysupgrade_protocol: "https"
+openwrt_sysupgrade_fqdn: "sysupgrade.openwrt.org"
+openwrt_sysupgrade_version_endpoint: /api/v1/overview
+openwrt_sysupgrade_version_url: >-
+  {{ openwrt_sysupgrade_protocol + "://"
+    + openwrt_sysupgrade_fqdn
+    + openwrt_sysupgrade_version_endpoint }}
+
 # Firmware selector can be hosted on other platforms
 openwrt_firmware_selector_protocol: "https"
 openwrt_firmware_selector_fqdn: "firmware-selector.openwrt.org"
@@ -15,10 +23,10 @@ openwrt_firmware_selector_endpoint: "/data"
 openwrt_firmware_selector_arguments:
   "{{ openwrt_version }}/{{ openwrt_platform }}/{{ openwrt_id }}"
 openwrt_firmware_selector_url: |
-  {{ openwrt_firmware_selector_protocol       + "://"
-   + openwrt_firmware_selector_fqdn           + "/"
-   + openwrt_firmware_selector_endpoint       + "/"
-   + openwrt_firmware_selector_arguments }}.json
+  {{ openwrt_firmware_selector_protocol   + "://"
+    + openwrt_firmware_selector_fqdn
+    + openwrt_firmware_selector_endpoint  + "/"
+    + openwrt_firmware_selector_arguments }}.json
 
 openwrt_sysupgrade_file_path: /tmp/sysupgrade.bin
 
