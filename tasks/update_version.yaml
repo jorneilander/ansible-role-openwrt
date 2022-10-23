@@ -10,7 +10,7 @@
   delegate_to: localhost
   register: firmware_selector_device_metadata
 
-- name: "[Version] - Set fact for version code ({{ openwrt_version }})"
+- name: "[Version] - Set fact for desired firmware version code"
   check_mode: false
   ansible.builtin.set_fact:
     openwrt_version_code: "{{ firmware_selector_device_metadata.json | json_query(query) }}"
@@ -26,11 +26,11 @@
   register:
     openwrt_current_version_code
 
-- name: "[Version] - Show versions"
+- name: "[Version] - Show version codes"
   ansible.builtin.debug:
     msg: |
-      Installed version: {{ openwrt_current_version_code.stdout }}
-      Latest version:    {{ openwrt_version_code }}
+      Installed version code: {{ openwrt_current_version_code.stdout }}
+      Latest version code:    {{ openwrt_version_code }}
 
 - name: "[Version] - Patch OpenWRT"
   when: openwrt_version_code != openwrt_current_version_code.stdout
