@@ -1,5 +1,8 @@
 ---
-# Check for latest stable and verify with version installed
+- name: "[Version] - Show OpenWRT version to be installed"
+  ansible.builtin.debug:
+    msg: "Installing OpenWRT version: {{ openwrt_version }}"
+
 - name: "[Version] - Download latest version information for device"
   check_mode: false
   ansible.builtin.uri:
