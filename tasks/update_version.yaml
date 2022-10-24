@@ -77,7 +77,7 @@
         mode: 0644
 
     - name: "[Version] - Upgrade device"
-      nohup:
+      nohup:  # noqa fqcn[action]
         command: "sysupgrade -v {{ openwrt_sysupgrade_file_path }}"
 
     - name: "[Version] - Wait for device"
