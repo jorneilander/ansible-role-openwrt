@@ -3,14 +3,12 @@ galaxy_info:
   role_name: openwrt
   author: Jorn Eilander
   description: Updating your OpenWRT device
-  company: ~
 
   issue_tracker_url: https://github.com/jorneilander/ansible-role-openwrt/issues
   license: Apache-2.0
   min_ansible_version: "2.1"
 
-  platforms:
-    - name: "openwrt"
+  platforms: []
 
   galaxy_tags:
     - openwrt
