@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [1.0.0] - 2022-10-24
+
+### Added
+
+- Check to get the latest stable OpenWRT version
+- Output step to show which OpenWRT version is about to be installed
+
+### Changed
+
+- Default value for `openwrt_version` to `latest`
+- Clarification throughout with output references to `version` and `version code`
+
+### Fixed
+
+- Linting issues
+
 ## [0.0.3] - 2022-10-23
 
 ### Changed
@@ -34,7 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[Unreleased]: https://github.com/jorneilander/ansible-role-openwrt/compare/0.0.3...HEAD
+[Unreleased]: https://github.com/jorneilander/ansible-role-openwrt/compare/1.0.0...HEAD
+[1.0.0]: https://github.com/jorneilander/ansible-role-openwrt/compare/0.0.3...1.0.0
 [0.0.3]: https://github.com/jorneilander/ansible-role-openwrt/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/jorneilander/ansible-role-openwrt/compare/0.0.1...0.0.2
 [0.0.1]: https://github.com/jorneilander/ansible-role-openwrt/releases/tag/0.0.1
