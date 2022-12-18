@@ -1,6 +1,36 @@
 {
+  "[ansible]": {
+    "editor.detectIndentation": true,
+    "editor.insertSpaces": true,
+    "editor.quickSuggestions": {
+      "comments": true,
+      "other": true,
+      "strings": true
+    },
+    "editor.tabSize": 2,
+    "gitlens.codeLens.scopes": [
+      "document"
+    ]
+  },
+  "[markdown]": {
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "other": "off",
+      "strings": "off"
+    },
+    "editor.trimAutoWhitespace": false,
+    "editor.unicodeHighlight.ambiguousCharacters": false,
+    "editor.unicodeHighlight.invisibleCharacters": false,
+    "editor.wordWrap": "on"
+  },
+  "ansible.python.activationScript": "/Users/jorn/Documents/git/ansible-role-openwrt/.venv/bin/activate",
   "files.associations": {
+    "*.md": "markdown",
     "*.y*ml": "ansible",
-    "*.md": "markdown"
-  }
+    ".*.y*ml": "yaml"
+  },
+  "files.insertFinalNewline": true,
+  "shellcheck.customArgs": [
+    "--external-sources"
+  ]
 }

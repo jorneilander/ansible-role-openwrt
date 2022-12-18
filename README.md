@@ -73,6 +73,17 @@ My thanks to [gekmihesg](https://github.com/gekmihesg)!
         openwrt_ssh_public_key: ~
 ```
 
+## Contributing
+
+### Required software
+
+- `Python 3`
+- [`direnv`](https://direnv.net)
+
+### Setting up your development environment
+
+Running `direnv allow` should setup your development environment for this role.
+
 ## License
 
 [GPL-3.0-or-later](https://spdx.org/licenses/GPL-3.0-or-later.html)
