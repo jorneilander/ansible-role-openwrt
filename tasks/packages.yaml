@@ -1,13 +1,13 @@
 ---
 - name: "[Packages] - Uninstall requested packages"
-  ansible.builtin.opkg:
+  community.general.packaging.os.opkg:
     name: "{{ openwrt_uninstalled_packages | join(',') }}"
     update_cache: true
     state: absent
   when: openwrt_uninstalled_packages | length > 0
 
 - name: "[Packages] - Install requested packages"
-  ansible.builtin.opkg:
+  community.general.packaging.os.opkg:
     name: "{{ openwrt_installed_packages | join(',') }}"
     update_cache: true
     state: present
