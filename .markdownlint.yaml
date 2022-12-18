@@ -1,0 +1,8 @@
+---
+default: true
+MD024:
+  allow_different_nesting: false
+  siblings_only: true
+
+MD013:
+  line_length: 120

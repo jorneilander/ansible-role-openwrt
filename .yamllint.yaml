@@ -2,6 +2,14 @@
 # Based on ansible-lint config
 extends: default
 
+yaml-files:
+  - '*.yaml'
+  - '*.yml'
+  - '.yamllint.yaml'
+
+ignore: |
+  .venv
+
 rules:
   line-length:
     max: 120

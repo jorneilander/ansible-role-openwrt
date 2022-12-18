@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Files to setup development environment using [`direnv`](https://direnv.net)
+- Linting configuration for [`markdown`](https://en.wikipedia.org/wiki/Markdown)
+
+### Changed
+
+- Configuration settings for [`yamllint`](https://yamllint.readthedocs.io/en/stable/)
 
 ### Fixed
 
