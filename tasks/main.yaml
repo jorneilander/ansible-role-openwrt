@@ -6,7 +6,7 @@
 
 - name: "[Main] - Apply monkey patch role"
   ansible.builtin.import_role:
-    name: "ansible-openwrt"
+    name: "gekmihesg.openwrt"
 
 - name: "[Main] - Manage back-up"
   ansible.builtin.include_tasks: "back_up.yaml"
