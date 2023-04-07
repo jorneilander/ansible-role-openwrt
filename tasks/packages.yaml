@@ -15,6 +15,8 @@
     state: absent
   with_items: "{{ openwrt_uninstalled_packages }}"
   when: openwrt_uninstalled_packages | length > 0
+  notify:
+    - "[Handler] - Reboot device"
 
 - name: "[Packages] - Install requested packages"
   community.general.packaging.os.opkg:
@@ -23,6 +25,8 @@
     state: present
   with_items: "{{ openwrt_installed_packages }}"
   when: openwrt_installed_packages | length > 0
+  notify:
+    - "[Handler] - Reboot device"
 
 - name: "[Packages] - Upgrade packages"
   when: openwrt_packages_upgrade_enabled | bool
