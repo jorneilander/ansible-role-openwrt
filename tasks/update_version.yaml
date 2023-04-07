@@ -80,6 +80,7 @@
         dest: "{{ openwrt_sysupgrade_file_path }}"
         mode: 0644
       ignore_errors: "{{ ansible_check_mode }}"
+      when: not ansible_check_mode
 
     - name: "[Version] - Upgrade device"
       nohup:  # noqa fqcn[action]
@@ -101,6 +102,8 @@
         openwrt_new_version_code
 
     - name: "[Version] - Fail when not patched"
-      when: openwrt_new_version_code == openwrt_current_version_code
+      when:
+        - openwrt_new_version_code != openwrt_current_version_code
+        - not ansible_check_mode
       ansible.builtin.fail:
         msg: "OpenWRT was not properly patched, this happens. Please re-run the playbook."
