@@ -9,6 +9,9 @@ openwrt_disabled_services: []
 openwrt_enabled_services: []
 
 # Packages
+openwrt_packages_upgrade_enabled: true
+openwrt_packages_upgrade_reboot_enabled: true
+openwrt_packages_upgrade_excluded: []
 openwrt_installed_packages: []
 openwrt_uninstalled_packages: []
 
