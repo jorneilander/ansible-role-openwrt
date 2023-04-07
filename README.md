@@ -1,9 +1,11 @@
 # OpenWRT
 
 A small [Ansible](https://www.ansible.com/) role to manage your [OpenWRT](https://openwrt.org/) devices.
-It will check for updates using the [OpenWRT Firmware Selector](https://firmware-selector.openwrt.org/) for your device, and apply the latest version if yours doesn't have it installed.
+It will check for updates using the [OpenWRT Firmware Selector](https://firmware-selector.openwrt.org/) for your device,
+and apply the latest version if yours doesn't have it installed.
 
-You can also manage any packages and services you want to have installed or removed, as well as add an authorized SSH key for easy access.
+You can also manage any packages and services you want to have installed or removed,
+as well as add an authorized SSH key for easy access.
 
 ## Requirements
 
@@ -30,7 +32,8 @@ Otherwise [`gekmihesg.openwrt`](https://galaxy.ansible.com/gekmihesg/openwrt) wi
 
 ## Dependencies
 
-This role relies on the [`gekmihesg.openwrt`](https://galaxy.ansible.com/gekmihesg/openwrt) to allow managing OpenWRT without having Python installed on the device.
+This role relies on the [`gekmihesg.openwrt`](https://galaxy.ansible.com/gekmihesg/openwrt) to allow managing OpenWRT
+without having Python installed on the device.
 
 My thanks to [gekmihesg](https://github.com/gekmihesg)!
 
