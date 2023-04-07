@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Files to setup development environment using [`direnv`](https://direnv.net)
 - Linting configuration for [`markdown`](https://en.wikipedia.org/wiki/Markdown)
+- Handler to reboot device
 
 ### Changed
 

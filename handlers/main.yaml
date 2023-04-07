@@ -1,0 +1,3 @@
+---
+- name: "[Handler] - Reboot device"
+  ansible.builtin.include_tasks: "handlers/reboot.yaml"
