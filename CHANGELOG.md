@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Configuration settings for [`yamllint`](https://yamllint.readthedocs.io/en/stable/)
+- Update `opkg` cache only once and loop over packages instead of joining them
 
 ### Fixed
 

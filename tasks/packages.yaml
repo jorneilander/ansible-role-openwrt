@@ -1,14 +1,25 @@
 ---
+- name: "[Packages] - Update opkg cache"
+  community.general.packaging.os.opkg:
+    name: ~
+    update_cache: true
+  failed_when: false
+  check_mode: false
+  changed_when: false
+  no_log: true
+
 - name: "[Packages] - Uninstall requested packages"
   community.general.packaging.os.opkg:
-    name: "{{ openwrt_uninstalled_packages | join(',') }}"
-    update_cache: true
+    name: "{{ item }}"
+    update_cache: false
     state: absent
+  with_items: "{{ openwrt_uninstalled_packages }}"
   when: openwrt_uninstalled_packages | length > 0
 
 - name: "[Packages] - Install requested packages"
   community.general.packaging.os.opkg:
-    name: "{{ openwrt_installed_packages | join(',') }}"
-    update_cache: true
+    name: "{{ item }}"
+    update_cache: false
     state: present
+  with_items: "{{ openwrt_installed_packages }}"
   when: openwrt_installed_packages | length > 0
