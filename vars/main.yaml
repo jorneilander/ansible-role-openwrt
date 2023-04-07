@@ -4,11 +4,11 @@ openwrt_id: "{{ undef(hint='Please provide your device id found on OpenWRT Firmw
 openwrt_platform: "{{ undef(hint='Please provide your device platform found on OpenWRT Firmware Selector') }}"
 openwrt_version: latest
 
-# Packages
+# Services
 openwrt_disabled_services: []
 openwrt_enabled_services: []
 
-# Services
+# Packages
 openwrt_installed_packages: []
 openwrt_uninstalled_packages: []
 
