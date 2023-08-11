@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Release candidates version no longer considered for `openwrt_version: "latest"`
 
+### Fixed
+
+- Interchange `/vars` with `/defaults` to conform to standards
+
 ## [1.1.0] - 2023-04-07
 
 ### Added
