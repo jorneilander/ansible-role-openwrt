@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-~
+### Added
+
+- Option to set `openwrt_version` to `"release_candidate"` to consider release candidate builds as 'latest'
+
+### Changed
+
+- Release candidates version no longer considered for `openwrt_version: "latest"`
 
 ## [1.1.0] - 2023-04-07
 
