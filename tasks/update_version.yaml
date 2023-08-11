@@ -1,6 +1,6 @@
 ---
 - name: "[Version] - Get latest version of OpenWRT"
-  when: openwrt_version == "latest"
+  when: openwrt_version in ["latest", "release_candidate"]
   block:
   - name: "[Version] - Download version information from OpenWRT"
     check_mode: false
@@ -9,12 +9,22 @@
     delegate_to: localhost
     register: openwrt_version_metadata
 
+  - name: "[Version] - Set version query fact"
+    check_mode: false
+    ansible.builtin.set_fact:
+      openwrt_version_query: >-
+        {%- if openwrt_version == "release_candidate" -%}
+          latest[0]
+        {%- else -%}
+          latest[? !contains(@, 'rc')] | [0]
+        {%- endif -%}
+
   - name: "[Version] - Set latest OpenWRT version fact"
     check_mode: false
     ansible.builtin.set_fact:
       openwrt_version: "{{ openwrt_version_metadata.json | json_query(query) }}"
     vars:
-      query: "latest[0]"
+      query: "{{ openwrt_version_query }}"
 
 - name: "[Version] - Show OpenWRT version to be installed"
   check_mode: false
