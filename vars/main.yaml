@@ -1,23 +1,38 @@
 ---
-# Device configuration
-openwrt_id: "{{ undef(hint='Please provide your device id found on OpenWRT Firmware Selector') }}"
-openwrt_platform: "{{ undef(hint='Please provide your device platform found on OpenWRT Firmware Selector') }}"
-openwrt_version: latest
+openwrt_download_fqdn: downloads.openwrt.org
+openwrt_download_url_prefix: >-
+  {%- if openwrt_version == 'SNAPSHOT' -%}
+    https://{{ openwrt_download_fqdn }}/snapshots/targets/
+  {%- else -%}
+    https://{{ openwrt_download_fqdn }}/releases/{{ openwrt_version }}/targets
+  {%- endif -%}
 
-# Services
-openwrt_disabled_services: []
-openwrt_enabled_services: []
+openwrt_sysupgrade_protocol: "https"
+openwrt_sysupgrade_fqdn: "sysupgrade.openwrt.org"
+openwrt_sysupgrade_version_endpoint: /api/v1/overview
+openwrt_sysupgrade_version_url: >-
+  {{ openwrt_sysupgrade_protocol + "://"
+    + openwrt_sysupgrade_fqdn
+    + openwrt_sysupgrade_version_endpoint }}
 
-# Packages
-openwrt_packages_upgrade_enabled: true
-openwrt_packages_upgrade_reboot_enabled: true
-openwrt_packages_upgrade_excluded: []
-openwrt_installed_packages: []
-openwrt_uninstalled_packages: []
+# Firmware selector can be hosted on other platforms
+openwrt_firmware_selector_protocol: "https"
+openwrt_firmware_selector_fqdn: "firmware-selector.openwrt.org"
+openwrt_firmware_selector_endpoint: "/data"
+openwrt_firmware_selector_arguments:
+  "{{ openwrt_version }}/{{ openwrt_platform }}/{{ openwrt_id }}"
+openwrt_firmware_selector_url: |
+  {{ openwrt_firmware_selector_protocol   + "://"
+    + openwrt_firmware_selector_fqdn
+    + openwrt_firmware_selector_endpoint  + "/"
+    + openwrt_firmware_selector_arguments }}.json
+
+openwrt_sysupgrade_file_path: /tmp/sysupgrade.bin
+
+# Bunch of default locations
+openwrt_dropbear_authorized_keys_path: "/etc/dropbear/authorized_keys"
 
 # Back-up
-openwrt_back_up_enabled: true
-openwrt_back_up_local_dir: "{{ undef(hint='Please provide a directory to store your back-ups') }}"
-
-# Other
-openwrt_ssh_public_key: ~
+## 'gather_facts' does not provide 'ansible_date_time' on OpenWRT
+openwrt_date: "{{ '%Y-%m-%d' | strftime(ansible_facts.openwrt_info.localtime) }}"
+openwrt_back_up_file_path: "/tmp/backup-{{ ansible_host }}-{{ openwrt_date }}.tar.gz"
