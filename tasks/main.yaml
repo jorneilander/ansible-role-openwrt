@@ -1,4 +1,35 @@
 ---
+- name: "[Main] - Show role configuration information"
+  ansible.builtin.debug:
+    msg: |
+      # Device configuration
+      openwrt_id:       "{{ openwrt_id }}"
+      openwrt_platform: "{{ openwrt_platform }}"
+      openwrt_version:  "{{ openwrt_version }}"
+
+      # Services
+      openwrt_disabled_services:
+      {{ openwrt_disabled_services | to_nice_yaml }}
+      openwrt_enabled_services:
+      {{ openwrt_enabled_services | to_nice_yaml }}
+
+      # Packages
+      openwrt_packages_upgrade_enabled:         {{ openwrt_packages_upgrade_enabled }}
+      openwrt_packages_upgrade_reboot_enabled:  {{ openwrt_packages_upgrade_reboot_enabled }}
+      openwrt_packages_upgrade_excluded:
+      {{ openwrt_packages_upgrade_excluded | to_nice_yaml }}
+      openwrt_installed_packages:
+      {{ openwrt_installed_packages | to_nice_yaml }}
+      openwrt_uninstalled_packages:
+      {{ openwrt_uninstalled_packages | to_nice_yaml }}
+
+      # Back-up
+      openwrt_back_up_enabled:    {{ openwrt_back_up_enabled }}
+      openwrt_back_up_local_dir:  {{ openwrt_back_up_local_dir }}
+
+      # Other
+      openwrt_ssh_public_key: {{ openwrt_ssh_public_key }}
+
 - name: "[Main] - Fail when no facts available"
   ansible.builtin.fail:
     msg: "Ensure you run this role in a playbook with 'gather_facts: true'"

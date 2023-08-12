@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Option to set `openwrt_version` to `"release_candidate"` to consider release candidate builds as 'latest'
+- Output to show the configuration of the role execution (useful when lists are assembled)
 
 ### Changed
 
