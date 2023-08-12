@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Option to set `openwrt_version` to `"release_candidate"` to consider release candidate builds as 'latest'
 - Output to show the configuration of the role execution (useful when lists are assembled)
+- Advanced playbook example to manage multiple devices in one playbook
 
 ### Changed
 
