@@ -2,6 +2,9 @@
   "recommendations": [
     "redhat.ansible",
     "timonwong.shellcheck",
-    "DavidAnson.vscode-markdownlint"
+    "davidanson.vscode-markdownlint",
+    "samuelcolvin.jinjahtml",
+    "leodevbro.blockman",
+    "redhat.vscode-yaml"
   ]
 }
