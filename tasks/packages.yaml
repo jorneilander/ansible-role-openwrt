@@ -45,4 +45,5 @@
       when:
         - item | split(' ') | first not in openwrt_packages_upgrade_excluded
         - opwrt_upgradable_packages | length > 0
+      changed_when: true
       notify: "Reboot device"
