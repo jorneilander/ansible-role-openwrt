@@ -11,9 +11,12 @@ repos:
     rev: v6.20.3
     hooks:
       - id: ansible-lint
+        language: python
         files: \.(yaml|yml)$
         entry: .venv/bin/python3 -m ansiblelint -c .ansible-lint.yaml
         exclude: ^\..*\.(yml|yaml)$
+        pass_filenames: false
+        always_run: false
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.32.0
     hooks:
