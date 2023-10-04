@@ -1,6 +1,7 @@
 ---
 galaxy_info:
   role_name: openwrt
+  namespace: jorneilander
   author: Jorn Eilander
   description: Updating your OpenWRT device
 
