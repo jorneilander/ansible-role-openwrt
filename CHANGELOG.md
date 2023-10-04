@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ~
 
+## [1.3.0] - 2023-09-04
+
+### Added
+
+- Option to resize the filesystem to max available (e.g., SD-card)
+- Option to disable version upgrade of device
+- Managed installation and execution of the [`gekmihesg.openwrt`](https://galaxy.ansible.com/gekmihesg/openwrt) role
+- [`ansible-lint`](https://github.com/ansible/ansible-lint) configuration
+- Conditionals for task-file inclusions
+
+### Changed
+
+- Optimized `opkg` cache updates
+
+### Fixed
+
+- Linting issues
+- Post-upgrade version comparison issue
+
 ## [1.2.0] - 2023-08-12
 
 ### Added
@@ -87,7 +106,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[Unreleased]: https://github.com/jorneilander/ansible-role-openwrt/compare/1.2.0...HEAD
+[Unreleased]: https://github.com/jorneilander/ansible-role-openwrt/compare/1.3.0...HEAD
+[1.3.0]: https://github.com/jorneilander/ansible-role-openwrt/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/jorneilander/ansible-role-openwrt/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/jorneilander/ansible-role-openwrt/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/jorneilander/ansible-role-openwrt/compare/0.0.3...1.0.0
