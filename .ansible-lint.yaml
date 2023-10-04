@@ -1,0 +1,17 @@
+---
+profile: "production"
+parseable: true
+quiet: true
+strict: true
+verbosity: 1
+
+exclude_paths:
+  - ".venv"
+
+enable_list:
+  - args
+  - empty-string-compare
+  - no-log-password
+  - no-same-owner
+  - name[prefix]
+  - yaml
