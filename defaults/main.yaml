@@ -23,3 +23,4 @@ openwrt_back_up_local_dir: "{{ undef(hint='Please provide a directory to store y
 
 # Other
 openwrt_ssh_public_key: ~
+openwrt_disk_resize_enabled: false
