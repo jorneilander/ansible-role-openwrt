@@ -10,3 +10,11 @@
     sleep: 5
     delay: 5
     timeout: 600
+
+- name: "Update opkg cache"
+  community.general.opkg:
+    name: ~
+    update_cache: true
+  failed_when: false
+  changed_when: false
+  no_log: true

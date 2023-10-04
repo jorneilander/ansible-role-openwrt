@@ -103,6 +103,14 @@
         delay: 5
         timeout: 600
 
+    - name: "update_version | Update opkg cache"
+      community.general.opkg:
+        name: ~
+        update_cache: true
+      failed_when: false
+      changed_when: false
+      no_log: true
+
     - name: "update_version | Check new version of device"
       changed_when: false
       ansible.builtin.shell:
