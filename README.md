@@ -30,6 +30,7 @@ Otherwise [`gekmihesg.openwrt`](https://galaxy.ansible.com/gekmihesg/openwrt) wi
 | `openwrt_ssh_public_key`                  | `string`  | `~`      | `"ssh-rsa AAAAB3N...f6f+K8="`                        | SSH public-key to be added to the list of Dropbear authored keys.                                                            |
 | `openwrt_back_up_enabled`                 | `boolean` | `true`   | `true`                                               | Create back-up of the OpenWRT configuration before updating.                                                                 |
 | `openwrt_back_up_local_dir`               | `string`  | `~`      | `"~/Downloads"`                                      | Directory on your local machine to store back-ups.                                                                           |
+| `openwrt_disk_resize_enabled`             | `boolean` | `false`  | `false`                                              | Enable option to resize to max available (e.g. SD-card)                                                                      |
 
 ### `openwrt_version`
 

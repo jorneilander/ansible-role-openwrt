@@ -1,0 +1,177 @@
+---
+- name: "disk_resize | Install required packages"
+  community.general.opkg:
+    name: "{{ item }}"
+    update_cache: false
+    state: "present"
+  with_items:
+    - parted
+    - losetup
+    - lsblk
+
+# Expand partition
+- name: "disk_resize | Get boot device"
+  check_mode: false
+  ansible.builtin.shell:
+    cmd: |
+      set -o errexit
+      set -o pipefail
+      parted -l | grep "Disk /" | awk '{print $2}' | sed s/://g
+  changed_when: false
+  register: openwrt_boot_device
+
+- name: "disk_resize | Get boot partition number"
+  check_mode: false
+  ansible.builtin.shell:
+    cmd: |
+      set -o errexit
+      set -o pipefail
+      parted -l | grep "boot" | awk '{print $1}'
+  changed_when: false
+  register: openwrt_boot_partition_number
+
+- name: "disk_resize | Set device and partition facts"
+  ansible.builtin.set_fact:
+    openwrt_boot_device: "{{ openwrt_boot_device.stdout }}"
+    openwrt_resize_partition_number: "{{ openwrt_boot_partition_number.stdout | int + 1 }}"
+
+- name: "disk_resize | Check if partition can be expanded"
+  ansible.builtin.shell:
+    cmd: |
+      set -o errexit
+      set -o pipefail
+      PARTITION_LAYOUT="$(parted ${DISK_DEVICE_ID} print free | grep "^ ${DISK_PARTITION_NUMBER}" -A1 | tail -1)"
+
+      if [[ "${PARTITION_LAYOUT}" =~ "Free Space" ]]; then
+        echo "true"
+      else
+        echo "false"
+      fi
+  environment:
+    DISK_DEVICE_ID: "{{ openwrt_boot_device }}"
+    DISK_PARTITION_NUMBER: "{{ openwrt_resize_partition_number }}"
+  check_mode: false
+  changed_when: false
+  register: openwrt_disk_partition_expandable
+
+- name: "disk_resize | Expand partition"
+  when: openwrt_disk_partition_expandable.stdout == "true"
+  block:
+    - name: "disk_resize | Expand partition"
+      ansible.builtin.shell:
+        cmd: >-
+          parted --script
+          ${DISK_DEVICE_ID}
+          resizepart ${DISK_PARTITION_NUMBER} 100%
+      environment:
+        DISK_DEVICE_ID: "{{ openwrt_boot_device }}"
+        DISK_PARTITION_NUMBER: "{{ openwrt_resize_partition_number }}"
+      changed_when: true
+      notify: "Reboot device"
+
+    - name: "disk_resize | Enforce reboot"
+      ansible.builtin.meta: "flush_handlers"
+
+# Expand filesystem
+- name: "disk_resize | Set filesystem tools fact"
+  ansible.builtin.set_fact:
+    openwrt_filesystems:
+      squashfs:
+        package: f2fs-tools
+        fsck_cmd: fsck.f2fs
+      ext4:
+        package: fstools
+        fsck_cmd: fsck.ext4
+
+- name: "disk_resize | Get filesystem type"
+  check_mode: false
+  ansible.builtin.shell:
+    cmd: |
+      set -o errexit
+      set -o pipefail
+      ubus call system board | jsonfilter -e "$['rootfs_type']"
+  changed_when: false
+  register: openwrt_root_filesystem_type
+
+- name: "disk_resize | Set filesystem facts"
+  ansible.builtin.set_fact:
+    openwrt_resize_partition_device: "{{ openwrt_boot_device }}p{{ openwrt_resize_partition_number }}"
+    openwrt_root_filesystem_type: "{{ openwrt_root_filesystem_type.stdout }}"
+
+- name: "disk_resize | Get loop-device"
+  check_mode: false
+  ansible.builtin.shell:
+    cmd: |
+      set -o errexit
+      set -o pipefail
+
+      case "${ROOT_FILESYSTEM_TYPE}" in
+        ext4)
+          LOOP_DEVICE="$(losetup -f)"
+          losetup "${LOOP_DEVICE}" "${PARTITION_DEVICE_ID}"
+          ;;
+        squashfs)
+          LOOP_DEVICE="$(losetup -n -O NAME | sort | sed -n -e "1p")"
+          ;;
+      esac
+
+      echo ${LOOP_DEVICE}
+  environment:
+    ROOT_FILESYSTEM_TYPE: "{{ openwrt_root_filesystem_type }}"
+    PARTITION_DEVICE_ID: "{{ openwrt_resize_partition_device }}"
+  changed_when: false
+  register: openwrt_disk_loop_device
+
+- name: "disk_resize | Check if filesystem can be expanded"
+  check_mode: false
+  ansible.builtin.shell:
+    cmd: |
+      set -o errexit
+      set -o pipefail
+      LOOP_DEVICE_PARTITION_SIZE=$(lsblk ${LOOP_DEVICE} -o SIZE | tail -1 | awk '{print $1'})
+      LOOP_DEVICE_FILESYSTEM_SIZE=$(lsblk ${LOOP_DEVICE} -o FSSIZE | tail -1 | awk '{print $1'})
+
+      if [[ "${LOOP_DEVICE_PARTITION_SIZE}" != "${LOOP_DEVICE_FILESYSTEM_SIZE}" ]]; then
+        echo "true"
+      else
+        echo "false"
+      fi
+  environment:
+    LOOP_DEVICE: "{{ openwrt_disk_loop_device.stdout }}"
+  changed_when: false
+  register: openwrt_filesystem_expandable
+
+- name: "disk_resize | Resize filesystem and reboot"
+  when: openwrt_filesystem_expandable.stdout == "true"
+  block:
+    - name: "disk_resize |  Install filesystem tools"
+      community.general.opkg:
+        name: "{{ item }}"
+        state: "present"
+        update_cache: false
+      loop:
+        - resize2fs
+        - "{{ openwrt_filesystems[openwrt_root_filesystem_type]['package'] }}"
+
+    - name: "disk_resize | Resize filesystem"
+      ansible.builtin.shell:
+        cmd: |
+          LOOP_DEVICE_OFFSET="$(losetup -n -O OFFSET ${LOOP_DEVICE})"
+          LOOP_DEVICE_NEW="$(losetup -f)"
+          losetup -o ${LOOP_DEVICE_OFFSET} ${LOOP_DEVICE_NEW} ${PARTITION_DEVICE_ID}
+
+          ${FILESYSTEM_CHECK_BIN} -f ${LOOP_DEVICE_NEW}
+
+          mount ${LOOP_DEVICE_NEW} /mnt
+          umount ${LOOP_DEVICE_NEW}
+
+          resize2fs -f ${LOOP_DEVICE_NEW}
+      environment:
+        LOOP_DEVICE: "{{ openwrt_disk_loop_device.stdout }}"
+        PARTITION_DEVICE_ID: "{{ openwrt_resize_partition_device }}"
+        FILESYSTEM_CHECK_BIN: "{{ openwrt_filesystems[openwrt_root_filesystem_type]['fsck_cmd'] }}"
+      changed_when: true
+      notify: "Reboot device"
+
+    - name: "disk_resize | Enforce reboot"
+      ansible.builtin.meta: "flush_handlers"
