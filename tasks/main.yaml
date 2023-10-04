@@ -7,6 +7,8 @@
       openwrt_platform: "{{ openwrt_platform }}"
       openwrt_version:  "{{ openwrt_version }}"
 
+      openwrt_version_upgrade_enabled: "{{ openwrt_version_upgrade_enabled }}"
+
       # Services
       openwrt_disabled_services:
       {{ openwrt_disabled_services | to_nice_yaml }}
@@ -39,6 +41,7 @@
 
 - name: "Update image"
   ansible.builtin.include_tasks: "update_version.yaml"
+  when: openwrt_version_upgrade_enabled
 
 - name: "Add SSH public key"
   ansible.builtin.include_tasks: "ssh_add_keys.yaml"
