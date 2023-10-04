@@ -30,14 +30,8 @@
       # Other
       openwrt_ssh_public_key: {{ openwrt_ssh_public_key }}
 
-- name: "[Main] - Fail when no facts available"
-  ansible.builtin.fail:
-    msg: "Ensure you run this role in a playbook with 'gather_facts: true'"
-  when: ansible_facts.keys() | length == 0
-
-- name: "[Main] - Apply monkey patch role"
-  ansible.builtin.import_role:
-    name: "gekmihesg.openwrt"
+- name: "Manage prerequisites"
+  ansible.builtin.import_tasks: "prerequisites.yaml"
 
 - name: "[Main] - Manage back-up"
   ansible.builtin.include_tasks: "back_up.yaml"

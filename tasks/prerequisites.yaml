@@ -1,0 +1,23 @@
+---
+- name: "prerequisites | Update opkg cache"
+  community.general.opkg:
+    name: ~
+    update_cache: true
+  failed_when: false
+  changed_when: false
+  no_log: true
+
+- name: "prerequisites | Fail when no facts available"
+  ansible.builtin.fail:
+    msg: "Ensure you run this role in a playbook with 'gather_facts: true'"
+  when: ansible_facts.keys() | length == 0
+
+- name: "prerequisites | Install role gekmihesg.openwrt"
+  community.general.ansible_galaxy_install:
+    type: "role"
+    name: "gekmihesg.openwrt"
+  delegate_to: localhost
+
+- name: "prerequisites | Apply gekmihesg.openwrt role"
+  ansible.builtin.import_role:
+    name: "gekmihesg.openwrt"
