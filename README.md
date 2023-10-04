@@ -16,7 +16,7 @@ Otherwise [`gekmihesg.openwrt`](https://galaxy.ansible.com/gekmihesg/openwrt) wi
 
 | Variable                                  | type      | default  | example                                              | description                                                                                                                  |
 | ----------------------------------------- | --------- | -------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `openwrt_version`                         | `string`  | `latest` | `"SNAPSHOT"`                                         | OpenWRT version to be installed. [More information](#openwrt_version)                                                   |
+| `openwrt_version`                         | `string`  | `latest` | `"SNAPSHOT"`                                         | OpenWRT version to be installed. [More information](#openwrt_version)                                                        |
 | `openwrt_platform`                        | `string`  | `~`      | `"realtek/rtl838x"`                                  | OpenWRT platform for your device. Check [OpenWRT Firmware Selector](https://firmware-selector.openwrt.org/) for your device. |
 | `openwrt_id`                              | `string`  | `~`      | `"netgear_gs308t-v1"`                                | OpenWRT id for your device. Check [OpenWRT Firmware Selector](https://firmware-selector.openwrt.org/) for your device.       |
 | `openwrt_version_upgrade_enabled`         | `boolean` | `true`   | `true`                                               | Enable option to upgrade OpenWRT version of the device                                                                       |
@@ -101,7 +101,7 @@ We only need to be mindful of not re-using variable names.
 In this example all variables for a group have the prefix `group_<group_name>_` to mitigate that issue.
 
 - Every individual device gets their device configuration set in `inventory/hosts.yml`.
-- Defaults for *all* devices (e.g., installing `luci`) get set using the `openwrt` group variables in `inventory/group_vars/openwrt.yaml`.
+- Defaults for _all_ devices (e.g., installing `luci`) get set using the `openwrt` group variables in `inventory/group_vars/openwrt.yaml`.
 - Defaults for device groups (e.g., access points) get set using the their respective group variables (e.g., `inventory/group_vars/openwrt_access_point.yaml`)
 
 <details>
