@@ -121,7 +121,7 @@
 
     - name: "update_version | Fail when not patched"
       when:
-        - openwrt_new_version_code == openwrt_current_version_code
         - not ansible_check_mode
+        - openwrt_new_version_code.stdout == openwrt_current_version_code.stdout
       ansible.builtin.fail:
         msg: "OpenWRT was not properly patched, this happens. Please re-run the playbook."
