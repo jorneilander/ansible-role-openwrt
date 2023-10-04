@@ -8,53 +8,50 @@
   changed_when: false
   no_log: true
 
-- name: "[Packages] - Uninstall requested packages"
-  community.general.packaging.os.opkg:
+- name: "packages | Uninstall requested packages"
+  community.general.opkg:
     name: "{{ item }}"
     update_cache: false
     state: absent
   with_items: "{{ openwrt_uninstalled_packages }}"
   when: openwrt_uninstalled_packages | length > 0
-  notify:
-    - "[Handler] - Reboot device"
+  notify: "Reboot device"
 
-- name: "[Packages] - Install requested packages"
-  community.general.packaging.os.opkg:
+- name: "packages | Install requested packages"
+  community.general.opkg:
     name: "{{ item }}"
     update_cache: false
     state: present
   with_items: "{{ openwrt_installed_packages }}"
   when: openwrt_installed_packages | length > 0
-  notify:
-    - "[Handler] - Reboot device"
+  notify: "Reboot device"
 
-- name: "[Packages] - Upgrade packages"
+- name: "packages | Upgrade packages"
   when: openwrt_packages_upgrade_enabled | bool
   block:
-    - name: "[Packages] - Get list of upgradable packages from opkg"
+    - name: "packages | Get list of upgradable packages from opkg"
       ansible.builtin.command:
         cmd: "opkg list-upgradable 2>/dev/null | awk '{print $1}'"
       register: openwrt_upgradable_packages_opkg
       changed_when: false
       check_mode: false
 
-    - name: "[Packages] - Set list of upgradable packages"
+    - name: "packages | Set list of upgradable packages"
       ansible.builtin.set_fact:
         opwrt_upgradable_packages:
           "{{ openwrt_upgradable_packages_opkg.stdout_lines | map('split', ' ') | map('first') }}"
       check_mode: false
 
-    - name: "[Packages] - Show list of upgradable packages"
+    - name: "packages | Show list of upgradable packages"
       ansible.builtin.debug:
         msg: "{{ opwrt_upgradable_packages }}"
       check_mode: false
 
-    - name: "[Packages] - Upgrade package"
+    - name: "packages | Upgrade package"
       ansible.builtin.command:
         cmd: "opkg upgrade {{ item | split(' ') | first }}"
       loop: "{{ opwrt_upgradable_packages }}"
       when:
         - item | split(' ') | first not in openwrt_packages_upgrade_excluded
         - opwrt_upgradable_packages | length > 0
-      notify:
-        - "[Handler] - Reboot device"
+      notify: "Reboot device"

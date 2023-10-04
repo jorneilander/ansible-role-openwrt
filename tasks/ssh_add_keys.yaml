@@ -1,5 +1,5 @@
 ---
-- name: "[SSH] - Add public key"
+- name: "ssh_add_keys | Add public key"
   ansible.builtin.lineinfile:
     path: "{{ openwrt_dropbear_known_keys_path }}"
     line: "{{ openwrt_ssh_public_key }}"
