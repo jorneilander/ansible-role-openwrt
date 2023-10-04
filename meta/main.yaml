@@ -14,5 +14,5 @@ galaxy_info:
   galaxy_tags:
     - openwrt
 
-dependencies:
-  - role: gekmihesg.openwrt
+# dependencies:
+#   - role: gekmihesg.openwrt
