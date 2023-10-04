@@ -50,6 +50,7 @@
 
 - name: "Add SSH public key"
   ansible.builtin.include_tasks: "ssh_add_keys.yaml"
+  when: openwrt_ssh_public_key
 
 - name: "Manage packages"
   ansible.builtin.import_tasks: "packages.yaml"
