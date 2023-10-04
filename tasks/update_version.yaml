@@ -53,8 +53,7 @@
       set -o errexit
       set -o pipefail
       grep BUILD_ID /etc/os-release | cut -d '=' -f 2 | tr -d '"'
-  register:
-    openwrt_current_version_code
+  register: openwrt_current_version_code
 
 - name: "update_version | Show version codes"
   check_mode: false
@@ -68,8 +67,7 @@
   block:
     - name: "update_version | Set download file"
       ansible.builtin.set_fact:
-        openwrt_download_file_name:
-          "{{ firmware_selector_device_metadata.json | json_query(file_query) }}"
+        openwrt_download_file_name: "{{ firmware_selector_device_metadata.json | json_query(file_query) }}"
       vars:
         file_query: "images[?type=='sysupgrade'] | [0] | name"
 
@@ -120,8 +118,7 @@
           set -o errexit
           set -o pipefail
           grep BUILD_ID /etc/os-release | cut -d '=' -f 2 | tr -d '"'
-      register:
-        openwrt_new_version_code
+      register: openwrt_new_version_code
 
     - name: "update_version | Fail when not patched"
       when:
