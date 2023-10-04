@@ -3,3 +3,4 @@ ansible-lint
 yamllint
 jmespath
 pre-commit
+molecule-plugins==23.4.1
