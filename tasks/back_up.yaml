@@ -1,10 +1,10 @@
 ---
-- name: "[Back-up] - Create back-up"
+- name: "back_up | Create back-up"
   ansible.builtin.command:
     cmd: "sysupgrade -b {{ openwrt_back_up_file_path }}"
     creates: "{{ openwrt_back_up_file_path }}"
 
-- name: "[Back-up] - Copy backup"
+- name: "back_up | Copy backup"
   ansible.builtin.fetch:
     dest: "{{ openwrt_back_up_local_dir }}"
     src: "{{ openwrt_back_up_file_path }}"

@@ -1,10 +1,10 @@
 ---
-- name: "[Handler] - Reboot device"
+- name: "Reboot device"
   ansible.builtin.command:
     cmd: reboot
   changed_when: true
 
-- name: "[Handler] - Wait for device"
+- name: "Wait for device"
   ansible.builtin.wait_for_connection:
     connect_timeout: 10
     sleep: 5
