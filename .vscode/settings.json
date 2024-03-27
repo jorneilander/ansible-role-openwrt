@@ -23,7 +23,7 @@
     "editor.unicodeHighlight.invisibleCharacters": false,
     "editor.wordWrap": "on"
   },
-  "ansible.python.activationScript": "/Users/jorn/Documents/git/ansible-role-openwrt/.venv/bin/activate",
+  "ansible.python.activationScript": "/Users/jorn/Developer/git/ansible-role-openwrt/.venv/bin/activate",
   "files.associations": {
     "*.md": "markdown",
     "*.y*ml": "ansible",
@@ -32,5 +32,6 @@
   "files.insertFinalNewline": true,
   "shellcheck.customArgs": [
     "--external-sources"
-  ]
+  ],
+  "ansible.python.interpreterPath": "/Users/jorn/Developer/git/ansible-role-openwrt/.venv/bin/python"
 }

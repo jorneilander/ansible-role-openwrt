@@ -1,0 +1,67 @@
+---
+- name: "patch_device | Get currently installed version code"
+  check_mode: false
+  changed_when: false
+  ansible.builtin.shell:
+    cmd: |
+      set -o errexit
+      set -o pipefail
+      grep BUILD_ID /etc/os-release | cut -d '=' -f 2 | tr -d '"'
+  register: openwrt_current_version_code
+
+- name: "patch_device | Show version codes"
+  check_mode: false
+  ansible.builtin.debug:
+    msg: |
+      Installed version code: {{ openwrt_current_version_code.stdout }}
+      Target version code:    {{ openwrt_version_code }}
+
+- name: "patch_device | Ensure any previous upgrade file doesn't exist"
+  ansible.builtin.file:
+    path: "{{ openwrt_sysupgrade_file_path }}"
+    state: absent
+
+- name: "patch_device | Copy file to device"
+  ansible.builtin.copy:
+    src: "{{ openwrt_download.dest }}"
+    dest: "{{ openwrt_sysupgrade_file_path }}"
+    mode: 0644
+  ignore_errors: "{{ ansible_check_mode }}"
+  when: not ansible_check_mode
+
+- name: "patch_device | Upgrade device"
+  nohup:  # noqa fqcn[action]
+    command: "sysupgrade -v {{ openwrt_sysupgrade_file_path }}"
+
+- name: "patch_device | Wait for device"
+  ansible.builtin.wait_for_connection:
+    connect_timeout: 10
+    sleep: 5
+    delay: 5
+    timeout: 600
+
+- name: "patch_device | Update opkg cache"
+  community.general.opkg:
+    name: ~  # noqa args[module]
+    update_cache: true
+  changed_when: false
+  when: not ansible_check_mode
+  register: patch_device_opkg_cache_update
+  failed_when:
+    - '"False: Unknown package" not in patch_device_opkg_cache_update.msg'
+
+- name: "patch_device | Check new version of device"
+  changed_when: false
+  ansible.builtin.shell:
+    cmd: |
+      set -o errexit
+      set -o pipefail
+      grep BUILD_ID /etc/os-release | cut -d '=' -f 2 | tr -d '"'
+  register: openwrt_new_version_code
+
+- name: "patch_device | Fail when not patched"
+  when:
+    - not ansible_check_mode
+    - openwrt_new_version_code.stdout == openwrt_current_version_code.stdout
+  ansible.builtin.fail:
+    msg: "OpenWRT was not properly patched, this happens. Please re-run the playbook."

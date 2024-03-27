@@ -1,4 +1,4 @@
-ansible
+ansible==8.6.1
 ansible-lint
 yamllint
 jmespath
