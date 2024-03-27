@@ -21,3 +21,9 @@
 - name: "prerequisites | Apply gekmihesg.openwrt role"
   ansible.builtin.import_role:
     name: "gekmihesg.openwrt"
+
+- name: "prerequisites | Install required packages"
+  community.general.opkg:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ openwrt_packages_required }}"

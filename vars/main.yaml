@@ -36,3 +36,8 @@ openwrt_dropbear_authorized_keys_path: "/etc/dropbear/authorized_keys"
 ## 'gather_facts' does not provide 'ansible_date_time' on OpenWRT
 openwrt_date: "{{ '%Y-%m-%d' | strftime(ansible_facts.openwrt_info.localtime) }}"
 openwrt_back_up_file_path: "/tmp/backup-{{ ansible_host }}-{{ openwrt_date }}.tar.gz"
+
+openwrt_packages_required:
+  - python3-light
+  - python3-urllib
+  - python3-logging
