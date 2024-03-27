@@ -29,6 +29,12 @@
       openwrt_back_up_enabled:    {{ openwrt_back_up_enabled }}
       openwrt_back_up_local_dir:  {{ openwrt_back_up_local_dir }}
 
+      # Cron jobs
+      openwrt_cron_jobs:
+      {% for cron_job in openwrt_cron_jobs %}
+        - {{ cron_job.name }} - {{ cron_job.job | length }} characters
+      {% endfor %}
+
       # Other
       openwrt_disk_resize_enabled: "{{ openwrt_disk_resize_enabled }}"
       openwrt_ssh_public_key: {{ openwrt_ssh_public_key }}
@@ -57,3 +63,6 @@
 
 - name: "Manage services"
   ansible.builtin.import_tasks: "services.yaml"
+
+- name: "Manage cron jobs"
+  ansible.builtin.import_tasks: "cron_jobs.yaml"

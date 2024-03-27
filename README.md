@@ -7,6 +7,9 @@ and apply the latest version if yours doesn't have it installed.
 You can also manage any packages and services you want to have installed or removed,
 as well as add an authorized SSH key for easy access.
 
+This role will install `python3-light` and some other small packages on the device.
+The amount of space needed is minimal, and most devices should be able to accomodate this just fine.
+
 ## Requirements
 
 You will need to run this role from a playbook, and have `gather_facts` enabled.
@@ -14,23 +17,25 @@ Otherwise [`gekmihesg.openwrt`](https://galaxy.ansible.com/gekmihesg/openwrt) wi
 
 ## Role Variables
 
-| Variable                                  | type      | default  | example                                              | description                                                                                                                  |
-| ----------------------------------------- | --------- | -------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `openwrt_version`                         | `string`  | `latest` | `"SNAPSHOT"`                                         | OpenWRT version to be installed. [More information](#openwrt_version)                                                        |
-| `openwrt_platform`                        | `string`  | `~`      | `"realtek/rtl838x"`                                  | OpenWRT platform for your device. Check [OpenWRT Firmware Selector](https://firmware-selector.openwrt.org/) for your device. |
-| `openwrt_id`                              | `string`  | `~`      | `"netgear_gs308t-v1"`                                | OpenWRT id for your device. Check [OpenWRT Firmware Selector](https://firmware-selector.openwrt.org/) for your device.       |
-| `openwrt_version_upgrade_enabled`         | `boolean` | `true`   | `true`                                               | Enable option to upgrade OpenWRT version of the device                                                                       |
-| `openwrt_disabled_services`               | `list`    | `[]`     | `["odhcpd", "dnsmasq"]`                              | List of services to be disabled on your device.                                                                              |
-| `openwrt_enabled_services`                | `list`    | `[]`     | `["acme", "uhttpd", "prometheus-node-exporter-lua"]` | List of services to be enabled on your device.                                                                               |
-| `openwrt_packages_upgrade_enabled`        | `boolean` | `true`   | `true`                                               | Enable option to upgrade all installed packages if possible                                                                  |
-| `openwrt_packages_upgrade_reboot_enabled` | `boolean` | `true`   | `true`                                               | Reboot device after packages have been upgraded                                                                              |
-| `openwrt_packages_upgrade_excluded`       | `list`    | `[]`     | `["luci", "dawn"]`                                   | Exclude certain packages from being upgraded                                                                                 |
-| `openwrt_installed_packages`              | `list`    | `[]`     | `["acme", luci", "luci-app-acme", "wpad-wolfssl"]`   | List of packages to be installed on your device.                                                                             |
-| `openwrt_uninstalled_packages`            | `list`    | `[]`     | `["wpad-basic-wolfssl"]`                             | List of packages to uninstalled on your device.                                                                              |
-| `openwrt_ssh_public_key`                  | `string`  | `~`      | `"ssh-rsa AAAAB3N...f6f+K8="`                        | SSH public-key to be added to the list of Dropbear authored keys.                                                            |
-| `openwrt_back_up_enabled`                 | `boolean` | `true`   | `true`                                               | Create back-up of the OpenWRT configuration before updating.                                                                 |
-| `openwrt_back_up_local_dir`               | `string`  | `~`      | `"~/Downloads"`                                      | Directory on your local machine to store back-ups.                                                                           |
-| `openwrt_disk_resize_enabled`             | `boolean` | `false`  | `false`                                              | Enable option to resize to max available (e.g. SD-card)                                                                      |
+| Variable                                  | type         | default              | example                                                                                                      | description                                                                                                                  |
+| ----------------------------------------- | ------------ | -------------------- | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| `openwrt_version`                         | `string`     | `latest`             | `"SNAPSHOT"`                                                                                                 | OpenWRT version to be installed. [More information](#openwrt_version)                                                        |
+| `openwrt_platform`                        | `string`     | `~`                  | `"realtek/rtl838x"`                                                                                          | OpenWRT platform for your device. Check [OpenWRT Firmware Selector](https://firmware-selector.openwrt.org/) for your device. |
+| `openwrt_id`                              | `string`     | `~`                  | `"netgear_gs308t-v1"`                                                                                        | OpenWRT id for your device. Check [OpenWRT Firmware Selector](https://firmware-selector.openwrt.org/) for your device.       |
+| `openwrt_version_upgrade_enabled`         | `boolean`    | `true`               | `true`                                                                                                       | Enable option to upgrade OpenWRT version of the device                                                                       |
+| `openwrt_disabled_services`               | `list`       | `[]`                 | `["odhcpd", "dnsmasq"]`                                                                                      | List of services to be disabled on your device.                                                                              |
+| `openwrt_enabled_services`                | `list`       | `[]`                 | `["acme", "uhttpd", "prometheus-node-exporter-lua"]`                                                         | List of services to be enabled on your device.                                                                               |
+| `openwrt_packages_upgrade_enabled`        | `boolean`    | `true`               | `true`                                                                                                       | Enable option to upgrade all installed packages if possible                                                                  |
+| `openwrt_packages_upgrade_reboot_enabled` | `boolean`    | `true`               | `true`                                                                                                       | Reboot device after packages have been upgraded                                                                              |
+| `openwrt_packages_upgrade_excluded`       | `list`       | `[]`                 | `["luci", "dawn"]`                                                                                           | Exclude certain packages from being upgraded                                                                                 |
+| `openwrt_installed_packages`              | `list`       | `[]`                 | `["acme", luci", "luci-app-acme", "wpad-wolfssl"]`                                                           | List of packages to be installed on your device.                                                                             |
+| `openwrt_uninstalled_packages`            | `list`       | `[]`                 | `["wpad-basic-wolfssl"]`                                                                                     | List of packages to uninstalled on your device.                                                                              |
+| `openwrt_ssh_public_key`                  | `string`     | `~`                  | `"ssh-rsa AAAAB3N...f6f+K8="`                                                                                | SSH public-key to be added to the list of Dropbear authored keys.                                                            |
+| `openwrt_back_up_enabled`                 | `boolean`    | `true`               | `true`                                                                                                       | Create back-up of the OpenWRT configuration before updating.                                                                 |
+| `openwrt_back_up_local_dir`               | `string`     | `~`                  | `"~/Downloads"`                                                                                              | Directory on your local machine to store back-ups.                                                                           |
+| `openwrt_disk_resize_enabled`             | `boolean`    | `false`              | `false`                                                                                                      | Enable option to resize to max available (e.g. SD-card)                                                                      |
+| `openwrt_cron_scripts_dir`                | `string`     | `/root/cron_scripts` | `/root/cron_scripts`                                                                                         | Target location of any scripts to be executed by `cron`.                                                                     |
+| `openwrt_cron_jobs`                       | `list[dict]` | `[]`                 | `[{"name":"Hello", "minute":"*", "hour":"*", "day":"*", "month":"*", "weekday":"*", "job":"echo 'Hello!'"}]` | List of cronjobs to be installed.                                                                                            |
 
 ### `openwrt_version`
 
@@ -87,6 +92,22 @@ My thanks to [gekmihesg](https://github.com/gekmihesg)!
         openwrt_uninstalled_packages:
           - "wpad-basic-wolfssl"
         openwrt_ssh_public_key: ~
+        openwrt_cron_jobs:
+          - name: UMDNS_RESTART
+            minute: "*"
+            job: |
+              #!/bin/ash
+              # UMDNS has a tendency to crash; both UMDNS and DAWN need to be restarted
+              OPENWRT_LOGGER_TAG="umdns_check"
+              logger -t ${OPENWRT_LOGGER_TAG} "Checking if UMDNS is running as expected"
+              UMDNS_OUTPUT_LINES_AMOUNT="$(ubus call umdns browse | wc -l)"
+              if [[ "${UMDNS_OUTPUT_LINES_AMOUNT}" -lt 5 ]]; then
+                logger -p err -t ${OPENWRT_LOGGER_TAG} "Restarting UMDNS and DAWN"
+                /etc/init.d/umdns restart
+                /etc/init.d/dawn restart
+              else
+                logger -t ${OPENWRT_LOGGER_TAG} "Everything looks fine"
+              fi
 ```
 
 ## Example Playbook (advanced)

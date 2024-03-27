@@ -1,0 +1,31 @@
+---
+- name: "cron_jobs | Create cron jobs directory"
+  ansible.builtin.file:
+    path: "{{ openwrt_cron_scripts_dir }}"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "u=rwx,g=rwx"
+
+- name: "cron_jobs | Copy scripts"
+  ansible.builtin.copy:
+    dest: "{{ openwrt_cron_scripts_dir }}/{{ item.name | lower }}.sh"
+    content: "{{ item.job }}"
+    owner: "root"
+    group: "root"
+    mode: "u=rwx,g=rwx"
+  loop: "{{ openwrt_cron_jobs }}"
+
+# Using 'blockinfile' since 'cron' requires a user, unsupported by OpenWRT
+- name: "cron_jobs | Configure cron jobs"
+  ansible.builtin.blockinfile:
+    path: "/etc/crontabs/root"
+    marker: "# {mark} ANSIBLE MANAGED CRON JOB: {{ item.name }}"
+    block: >
+      {{ item.minute | default("*") }}
+      {{ item.hour | default("*") }}
+      {{ item.day | default("*") }}
+      {{ item.month | default("*") }}
+      {{ item.weekday | default("*") }}
+      {{ openwrt_cron_scripts_dir }}/{{ item.name | lower }}.sh
+  loop: "{{ openwrt_cron_jobs }}"
