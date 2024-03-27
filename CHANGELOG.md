@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Installation of `python3-light` and other required packages
 - Option to add cron jobs
 
+### Fixed
+
+- Updating `opkg` and checking for success
+
 ## [1.3.0] - 2023-09-04
 
 ### Added
