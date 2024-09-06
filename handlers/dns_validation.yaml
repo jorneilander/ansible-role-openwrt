@@ -1,0 +1,9 @@
+---
+- name: "Reset resolv.conf"
+  ansible.builtin.lineinfile:
+    path: "{{ openwrt_dns_validation_resolv_conf_path }}"
+    line: "{{ openwrt_dns_validation_resolv_conf_line }}"
+    state: absent
+    owner: root
+    group: root
+    mode: o+rw,g+r,o+r

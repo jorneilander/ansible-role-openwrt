@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Option to add cron jobs
+- DNS test after upgrade
 
 ## [1.3.0] - 2023-09-04
 

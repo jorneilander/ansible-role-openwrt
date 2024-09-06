@@ -24,6 +24,11 @@ openwrt_back_up_local_dir: "{{ undef(hint='Please provide a directory to store y
 # Cron jobs
 openwrt_cron_scripts_dir: "/root/cron_scripts"
 openwrt_cron_jobs: []
+
+# DNS validation
+openwrt_dns_validation_server: 1.1.1.1
+openwrt_dns_validation_domain: google.com
+
 # Other
 openwrt_ssh_public_key: ~
 openwrt_disk_resize_enabled: false
