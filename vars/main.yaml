@@ -42,3 +42,6 @@ openwrt_python_packages:
   - python3-light
   - python3-urllib
   - python3-logging
+
+openwrt_dns_validation_resolv_conf_path: /tmp/resolv.conf
+openwrt_dns_validation_resolv_conf_line: "nameserver {{ openwrt_dns_validation_server }}"
