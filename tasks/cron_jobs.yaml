@@ -1,0 +1,56 @@
+---
+# We need some form of Python to run 'blockinfile' later
+- name: "cron_jobs | Determine free space"
+  ansible.builtin.shell:  # noqa: risky-shell-pipe
+    cmd: df / | tail -1 | awk '{print $3}'
+  check_mode: false
+  changed_when: false
+  failed_when: false
+  register: cron_jobs_available_space
+
+- name: "cron_jobs | Notify lack of free space"
+  ansible.builtin.debug:
+    msg: "Not enough free space to install required packages to place cron jobs"
+  when: cron_jobs_available_space.stdout | int < openwrt_python_required_freespace
+
+- name: cron_jobs | Create cron jobs
+  when: cron_jobs_available_space.stdout | int > openwrt_python_required_freespace
+  block:
+    - name: "cron_jobs | Install required packages"
+      community.general.opkg:
+        name: "{{ item }}"
+        update_cache: false
+        state: present
+      with_items: "{{ openwrt_python_packages }}"
+      notify: "Reboot device"
+
+    - name: "cron_jobs | Create cron jobs directory"
+      ansible.builtin.file:
+        path: "{{ openwrt_cron_scripts_dir }}"
+        state: "directory"
+        owner: "root"
+        group: "root"
+        mode: "u=rwx,g=rwx"
+
+    - name: "cron_jobs | Copy scripts"
+      ansible.builtin.copy:
+        dest: "{{ openwrt_cron_scripts_dir }}/{{ item.name | lower }}.sh"
+        content: "{{ item.job }}"
+        owner: "root"
+        group: "root"
+        mode: "u=rwx,g=rwx"
+      loop: "{{ openwrt_cron_jobs }}"
+
+    # Using 'blockinfile' since 'cron' requires a user, unsupported by OpenWRT
+    - name: "cron_jobs | Configure cron jobs"
+      ansible.builtin.blockinfile:
+        path: "/etc/crontabs/root"
+        marker: "# {mark} ANSIBLE MANAGED CRON JOB: {{ item.name }}"
+        block: >
+          {{ item.minute | default("*") }}
+          {{ item.hour | default("*") }}
+          {{ item.day | default("*") }}
+          {{ item.month | default("*") }}
+          {{ item.weekday | default("*") }}
+          {{ openwrt_cron_scripts_dir }}/{{ item.name | lower }}.sh
+      loop: "{{ openwrt_cron_jobs }}"
