@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Option to add cron jobs
 - DNS test after upgrade
 
+### Fixed
+
+- Updating `opkg` and checking for success
+- `opkg` execution during `check mode`
+
 ## [1.3.0] - 2023-09-04
 
 ### Added
