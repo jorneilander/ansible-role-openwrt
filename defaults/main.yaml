@@ -21,6 +21,9 @@ openwrt_uninstalled_packages: []
 openwrt_back_up_enabled: true
 openwrt_back_up_local_dir: "{{ undef(hint='Please provide a directory to store your back-ups') }}"
 
+# Cron jobs
+openwrt_cron_scripts_dir: "/root/cron_scripts"
+openwrt_cron_jobs: []
 # Other
 openwrt_ssh_public_key: ~
 openwrt_disk_resize_enabled: false
