@@ -21,16 +21,19 @@
     "editor.trimAutoWhitespace": false,
     "editor.unicodeHighlight.ambiguousCharacters": false,
     "editor.unicodeHighlight.invisibleCharacters": false,
-    "editor.wordWrap": "on"
+    "editor.wordWrap": "off"
   },
-  "ansible.python.activationScript": "/Users/jorn/Documents/git/ansible-role-openwrt/.venv/bin/activate",
+  "ansible.python.activationScript": "/Users/jorn/Developer/git/ansible-role-openwrt/.venv/bin/activate",
+  "ansible.validation.lint.path": ".venv/bin/ansible-lint",
   "files.associations": {
     "*.md": "markdown",
     "*.y*ml": "ansible",
     ".*.y*ml": "yaml"
   },
   "files.insertFinalNewline": true,
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python3",
   "shellcheck.customArgs": [
     "--external-sources"
-  ]
+  ],
+  "ansible.python.interpreterPath": "/Users/jorn/Developer/git/ansible-role-openwrt/.venv/bin/python3"
 }
