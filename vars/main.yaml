@@ -15,17 +15,14 @@ openwrt_sysupgrade_version_url: >-
     + openwrt_sysupgrade_fqdn
     + openwrt_sysupgrade_version_endpoint }}
 
-# Firmware selector can be hosted on other platforms
 openwrt_firmware_selector_protocol: "https"
-openwrt_firmware_selector_fqdn: "firmware-selector.openwrt.org"
-openwrt_firmware_selector_endpoint: "/data"
-openwrt_firmware_selector_arguments:
-  "{{ openwrt_version }}/{{ openwrt_platform }}/{{ openwrt_id }}"
+openwrt_firmware_selector_fqdn: "downloads.openwrt.org"
+openwrt_firmware_selector_endpoint: "/releases/{{ openwrt_version }}/targets/{{ openwrt_platform }}"
 openwrt_firmware_selector_url: |
   {{ openwrt_firmware_selector_protocol   + "://"
     + openwrt_firmware_selector_fqdn
     + openwrt_firmware_selector_endpoint  + "/"
-    + openwrt_firmware_selector_arguments }}.json
+    + "profiles.json" }}
 
 openwrt_sysupgrade_file_path: /tmp/sysupgrade.bin
 
