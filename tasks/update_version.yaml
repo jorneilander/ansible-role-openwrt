@@ -69,7 +69,8 @@
       ansible.builtin.set_fact:
         openwrt_download_file_name: "{{ firmware_selector_device_metadata.json | json_query(file_query) }}"
       vars:
-        file_query: "images[?type=='sysupgrade'] | [0] | name"
+        file_query:
+          profiles."{{ openwrt_id }}".images[?type=='sysupgrade'] | [0] | name
 
     - name: "update_version | Download latest version"
       ansible.builtin.get_url:
