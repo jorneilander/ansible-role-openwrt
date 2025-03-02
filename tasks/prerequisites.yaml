@@ -5,7 +5,9 @@
     update_cache: true
   changed_when: false
   check_mode: false
-  when: true
+  when:
+    - openwrt_version != "SNAPSHOT"
+    - openwrt_packages_opkg_update_enabled | bool
   register: prerequisites_opkg_cache_update
   failed_when:
     - '"False: Unknown package" not in prerequisites_opkg_cache_update.msg'

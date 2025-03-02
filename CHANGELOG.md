@@ -7,7 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-~
+### Added
+
+- Add [OpenWRT Upgrade Tool](https://openwrt.org/docs/guide-user/installation/sysupgrade.owut) (`owut`)
+  and use as default method
+
+### Fixed
+
+- Refactor openwrt_firmware_selector_url
+- Remove python requirement for cron jobs
 
 ## [1.4.1] - 2024-10-20
 

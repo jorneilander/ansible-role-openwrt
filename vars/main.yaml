@@ -15,14 +15,10 @@ openwrt_sysupgrade_version_url: >-
     + openwrt_sysupgrade_fqdn
     + openwrt_sysupgrade_version_endpoint }}
 
-openwrt_firmware_selector_protocol: "https"
-openwrt_firmware_selector_fqdn: "downloads.openwrt.org"
-openwrt_firmware_selector_endpoint: "/releases/{{ openwrt_version }}/targets/{{ openwrt_platform }}"
 openwrt_firmware_selector_url: |
-  {{ openwrt_firmware_selector_protocol   + "://"
-    + openwrt_firmware_selector_fqdn
-    + openwrt_firmware_selector_endpoint  + "/"
-    + "profiles.json" }}
+  {{ openwrt_download_url_prefix + "/"
+   + openwrt_platform            + "/"
+   + "profiles.json" }}
 
 openwrt_sysupgrade_file_path: /tmp/sysupgrade.bin
 
@@ -33,12 +29,6 @@ openwrt_dropbear_authorized_keys_path: "/etc/dropbear/authorized_keys"
 ## 'gather_facts' does not provide 'ansible_date_time' on OpenWRT
 openwrt_date: "{{ '%Y-%m-%d' | strftime(ansible_facts.openwrt_info.localtime) }}"
 openwrt_back_up_file_path: "/tmp/backup-{{ ansible_host }}-{{ openwrt_date }}.tar.gz"
-
-openwrt_python_required_freespace: 50000
-openwrt_python_packages:
-  - python3-light
-  - python3-urllib
-  - python3-logging
 
 openwrt_dns_validation_resolv_conf_path: /tmp/resolv.conf
 openwrt_dns_validation_resolv_conf_line: "nameserver {{ openwrt_dns_validation_server }}"

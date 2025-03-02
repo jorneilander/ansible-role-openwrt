@@ -5,6 +5,7 @@ openwrt_platform: "{{ undef(hint='Please provide your device platform found on O
 openwrt_version: latest
 
 openwrt_version_upgrade_enabled: true
+openwrt_version_upgrade_owut_enabled: true
 
 # Services
 openwrt_disabled_services: []
@@ -16,6 +17,8 @@ openwrt_packages_upgrade_reboot_enabled: true
 openwrt_packages_upgrade_excluded: []
 openwrt_installed_packages: []
 openwrt_uninstalled_packages: []
+
+openwrt_packages_opkg_update_enabled: true
 
 # Back-up
 openwrt_back_up_enabled: true

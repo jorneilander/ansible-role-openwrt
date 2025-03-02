@@ -7,7 +7,8 @@
       openwrt_platform: "{{ openwrt_platform }}"
       openwrt_version:  "{{ openwrt_version }}"
 
-      openwrt_version_upgrade_enabled: "{{ openwrt_version_upgrade_enabled }}"
+      openwrt_version_upgrade_enabled: "{{ openwrt_version_upgrade_enabled | bool }}"
+      openwrt_version_upgrade_owut_enabled: "{{ openwrt_version_upgrade_owut_enabled | bool }}"
 
       # Services
       openwrt_disabled_services:
@@ -16,8 +17,8 @@
       {{ openwrt_enabled_services | to_nice_yaml }}
 
       # Packages
-      openwrt_packages_upgrade_enabled:         {{ openwrt_packages_upgrade_enabled }}
-      openwrt_packages_upgrade_reboot_enabled:  {{ openwrt_packages_upgrade_reboot_enabled }}
+      openwrt_packages_upgrade_enabled:         {{ openwrt_packages_upgrade_enabled | bool }}
+      openwrt_packages_upgrade_reboot_enabled:  {{ openwrt_packages_upgrade_reboot_enabled | bool }}
       openwrt_packages_upgrade_excluded:
       {{ openwrt_packages_upgrade_excluded | to_nice_yaml }}
       openwrt_installed_packages:
@@ -26,7 +27,7 @@
       {{ openwrt_uninstalled_packages | to_nice_yaml }}
 
       # Back-up
-      openwrt_back_up_enabled:    {{ openwrt_back_up_enabled }}
+      openwrt_back_up_enabled:    {{ openwrt_back_up_enabled | bool }}
       openwrt_back_up_local_dir:  {{ openwrt_back_up_local_dir }}
 
       # Cron jobs
@@ -36,7 +37,7 @@
       {% endfor %}
 
       # Other
-      openwrt_disk_resize_enabled: "{{ openwrt_disk_resize_enabled }}"
+      openwrt_disk_resize_enabled: "{{ openwrt_disk_resize_enabled | bool }}"
       openwrt_ssh_public_key: {{ openwrt_ssh_public_key }}
 
 - name: "Manage prerequisites"
@@ -44,15 +45,23 @@
 
 - name: "Manage back-up"
   ansible.builtin.include_tasks: "back_up.yaml"
-  when: openwrt_back_up_enabled
+  when: openwrt_back_up_enabled | bool
+
+- name: "Update image using OpenWRT Upgrade Tool"
+  ansible.builtin.include_tasks: "upgrade_tool.yaml"
+  when:
+    - openwrt_version_upgrade_enabled | bool
+    - openwrt_version_upgrade_owut_enabled | bool
 
 - name: "Update image"
   ansible.builtin.include_tasks: "update_version.yaml"
-  when: openwrt_version_upgrade_enabled
+  when:
+    - openwrt_version_upgrade_enabled | bool
+    - not openwrt_version_upgrade_owut_enabled | bool
 
 - name: "Resize disk"
   ansible.builtin.include_tasks: "disk_resize.yaml"
-  when: openwrt_disk_resize_enabled
+  when: openwrt_disk_resize_enabled | bool
 
 - name: "Add SSH public key"
   ansible.builtin.include_tasks: "ssh_add_keys.yaml"
@@ -60,6 +69,8 @@
 
 - name: "Manage packages"
   ansible.builtin.import_tasks: "packages.yaml"
+  when:
+    - not openwrt_version_upgrade_owut_enabled | bool
 
 - name: "Manage services"
   ansible.builtin.import_tasks: "services.yaml"

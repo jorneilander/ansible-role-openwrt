@@ -1,0 +1,122 @@
+---
+- name: "upgrade_tool | Install OpenWRT Upgrade Tool block"
+  block:
+    - name: "upgrade_tool | Install requested packages"
+      community.general.opkg:
+        name: "owut"
+        update_cache: false
+        state: present
+      check_mode: false
+  rescue:
+    - name: "upgrade_tool | Get currently installed version"
+      check_mode: false
+      changed_when: false
+      ansible.builtin.shell:
+        cmd: |
+          set -o errexit
+          set -o pipefail
+          grep VERSION_ID /etc/os-release | cut -d '=' -f 2 | tr -d '"'
+      register: openwrt_current_version
+
+    - name: "upgrade_tool | Get currently installed version code"
+      check_mode: false
+      changed_when: false
+      ansible.builtin.shell:
+        cmd: |
+          set -o errexit
+          set -o pipefail
+          grep BUILD_ID /etc/os-release | cut -d '=' -f 2 | tr -d '"'
+      register: openwrt_current_version_code
+
+    - name: "upgrade_tool | Fail when owut can't be installed"
+      ansible.builtin.fail:
+        msg: |
+          The OpenWRT Upgrade Tool could not be installed, it can only be used on OpenWRT version 24.x or higher.
+
+          Your OpenWRT version is {{ openwrt_current_version.stdout }} ({{ openwrt_current_version_code.stdout }})
+
+          Please re-run this role with 'openwrt_version_upgrade_owut_enabled: false'
+
+- name: "upgrade_tool | Get installed packages"
+  ansible.builtin.shell:
+    cmd: |
+      set -e errexit
+      set -o pipefail
+
+      opkg list-installed | awk '{print $1}'
+  register: packages_installed
+  changed_when: false
+  check_mode: false
+
+- name: "upgrade_tool | Set owut facts"
+  ansible.builtin.set_fact:
+    openwrt_owut_version: >-
+      {{- "--version-to " + openwrt_version | lower if openwrt_version != "latest" else "" }}
+    openwrt_owut_packages: >-
+      {%- set packages_to_uninstall = [] -%}
+      {%- for package_uninstalled in openwrt_uninstalled_packages
+          if package_uninstalled in packages_installed.stdout_lines -%}
+        {{ packages_to_uninstall.append(package_uninstalled) }}
+      {%- endfor -%}
+      {{- ' -a ' + openwrt_installed_packages|join(',') if openwrt_installed_packages|length > 0 else "" }}
+      {{- ' -r ' + packages_to_uninstall|join(',') if packages_to_uninstall|length > 0 else "" }}
+
+- name: "upgrade_tool | Get 'owut check' output"
+  ansible.builtin.shell:
+    cmd: |
+      set -o errexit
+      set -o pipefail
+
+      owut check {{ openwrt_owut_version }} --verbose {{ openwrt_owut_packages }}
+  check_mode: false
+  changed_when: false
+  register: owut_check_output
+
+- name: "upgrade_tool | Present 'owut check' output"
+  ansible.builtin.debug:
+    msg: |
+      {{ owut_check_output.stdout }}
+      {{ owut_check_output.stderr }}
+
+- name: "upgrade_tool | Upgrade image block"
+  when:
+    - not ansible_check_mode
+    - '"There are no changes, upgrade not necessary" not in owut_check_output.stdout'
+  block:
+    - name: "upgrade_tool | Validate user input on owut warning"
+      ansible.builtin.pause:
+        prompt: "The owut output contains a warning, press 'Y' and [enter] to continue"
+        echo: true
+      register: owut_warning_user_input
+      when:
+        - '"warning" in owut_check_output.stderr|lower'
+      failed_when: 'owut_warning_user_input.user_input|upper not in ["Y", "YES"]'
+
+    - name: "upgrade_tool | Upgrade device image"
+      ansible.builtin.command:
+        cmd: owut upgrade {{ openwrt_owut_version }} --verbose {{ openwrt_owut_packages }}
+      register: openwrt_owut_upgrade_output
+      changed_when: true
+
+    - name: "upgrade_tool | Present owut upgrade output"
+      ansible.builtin.debug:
+        msg: |
+          {{ openwrt_owut_upgrade_output.stdout }}
+          {{ openwrt_owut_upgrade_output.stderr }}
+
+    - name: "upgrade_tool | Wait for device"
+      ansible.builtin.wait_for_connection:
+        connect_timeout: 10
+        sleep: 5
+        delay: 5
+        timeout: 600
+
+    - name: "upgrade_tool | Update opkg cache"
+      community.general.opkg:
+        name: ~  # noqa args[module]
+        update_cache: true
+      changed_when: false
+      when: not ansible_check_mode
+      register: prerequisites_opkg_cache_update
+      failed_when:
+        - '"False: Unknown package" not in prerequisites_opkg_cache_update.msg'
