@@ -7,10 +7,29 @@
     group: "root"
     mode: "u=rwx,g=rwx"
 
-- name: "cron_jobs | Copy scripts"
+- name: "cron_jobs | Get localhost user group id"
+  ansible.builtin.command:
+    cmd: "id -g {{ lookup('env', 'USER') }}"
+  delegate_to: localhost
+  register: localhost_user_gid
+  check_mode: false
+  changed_when: false
+
+- name: cron_jobs | Template block
   ansible.builtin.copy:
-    dest: "{{ openwrt_cron_scripts_dir }}/{{ item.name | lower }}.sh"
+    dest: /tmp/{{ inventory_hostname_short | upper }}_{{ item.name | lower }}.sh.j2
     content: "{{ item.job }}"
+    owner: "{{ lookup('env', 'USER') }}"
+    group: "{{ localhost_user_gid.stdout }}"
+    mode: "u=rw,g=rw"
+  loop: "{{ openwrt_cron_jobs }}"
+  delegate_to: localhost
+  check_mode: false
+
+- name: "cron_jobs | Copy scripts"
+  ansible.builtin.template:
+    dest: "{{ openwrt_cron_scripts_dir }}/{{ item.name | lower }}.sh"
+    src: "/tmp/{{ inventory_hostname_short | upper }}_{{ item.name | lower }}.sh.j2"
     owner: "root"
     group: "root"
     mode: "u=rwx,g=rwx"
