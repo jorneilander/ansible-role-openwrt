@@ -6,6 +6,7 @@ openwrt_version: latest
 
 openwrt_version_upgrade_enabled: true
 openwrt_version_upgrade_owut_enabled: true
+openwrt_version_upgrade_owut_force_enabled: false
 
 # Services
 openwrt_disabled_services: []

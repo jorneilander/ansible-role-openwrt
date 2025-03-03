@@ -1,3 +1,9 @@
 ---
 - name: "Reboot device"
   ansible.builtin.include_tasks: "handlers/reboot.yaml"
+
+- name: "Restart cron"
+  ansible.builtin.service:
+    name: cron
+    state: restarted
+    enabled: true

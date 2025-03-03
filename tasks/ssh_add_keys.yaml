@@ -1,7 +1,11 @@
 ---
 - name: "ssh_add_keys | Add public key"
   ansible.builtin.lineinfile:
-    path: "{{ openwrt_dropbear_known_keys_path }}"
+    path: "{{ openwrt_dropbear_authorized_keys_path }}"
+    create: true
     line: "{{ openwrt_ssh_public_key }}"
+    owner: "root"
+    group: "root"
+    mode: "u=rw,g=,o="
   no_log: true
   when: openwrt_ssh_public_key

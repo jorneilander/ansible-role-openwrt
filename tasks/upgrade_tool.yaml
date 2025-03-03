@@ -58,6 +58,7 @@
           if package_uninstalled in packages_installed.stdout_lines -%}
         {{ packages_to_uninstall.append(package_uninstalled) }}
       {%- endfor -%}
+      {%- if openwrt_version_upgrade_owut_force_enabled | bool -%} --force{%- endif -%}
       {{- ' -a ' + openwrt_installed_packages|join(',') if openwrt_installed_packages|length > 0 else "" }}
       {{- ' -r ' + packages_to_uninstall|join(',') if packages_to_uninstall|length > 0 else "" }}
 
@@ -81,7 +82,9 @@
 - name: "upgrade_tool | Upgrade image block"
   when:
     - not ansible_check_mode
-    - '"There are no changes, upgrade not necessary" not in owut_check_output.stdout'
+    - ("There are no changes, upgrade not necessary" not in owut_check_output.stdout)
+      or
+      (openwrt_version_upgrade_owut_force_enabled | bool)
   block:
     - name: "upgrade_tool | Validate user input on owut warning"
       ansible.builtin.pause:
