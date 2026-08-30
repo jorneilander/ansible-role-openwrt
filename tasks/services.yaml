@@ -8,7 +8,7 @@
   loop: "{{ openwrt_enabled_services }}"
 
 - name: "services | Disable services"
-  failed_when: false
+  ignore_errors: true
   ansible.builtin.service:
     name: "{{ item }}"
     state: stopped

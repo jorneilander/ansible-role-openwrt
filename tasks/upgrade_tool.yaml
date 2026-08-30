@@ -164,4 +164,3 @@
         update_cache: true
       changed_when: false
       when: (not ansible_check_mode) and (openwrt_package_manager == "apk")
-

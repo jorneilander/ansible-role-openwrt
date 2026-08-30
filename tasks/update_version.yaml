@@ -118,7 +118,7 @@
         line: "{{ openwrt_dns_validation_resolv_conf_line }}"
         owner: root
         group: root
-        mode: o+rw,g+r,o+r
+        mode: u=rw,g=r,o=r
       check_mode: false
       when: dns_test.rc != 0
       notify: "Reset resolv.conf"

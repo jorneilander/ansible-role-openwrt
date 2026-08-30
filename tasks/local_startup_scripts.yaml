@@ -15,9 +15,6 @@
   loop: "{{ openwrt_scripts_startup | dict2items }}"
   register: openwrt_scripts_startup_copied
 
-- ansible.builtin.debug:
-    msg: "{{ openwrt_scripts_startup_copied }}"
-
 - name: local_startup_scripts | Copy scripts into rc.local
   ansible.builtin.lineinfile:
     path: /etc/rc.local
