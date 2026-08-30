@@ -8,4 +8,3 @@
     group: "root"
     mode: "u=rw,g=,o="
   no_log: true
-  when: openwrt_ssh_public_key

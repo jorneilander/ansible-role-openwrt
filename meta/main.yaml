@@ -16,3 +16,6 @@ galaxy_info:
 
 # dependencies:
 #   - role: gekmihesg.openwrt
+
+collections:
+  - community.openwrt

@@ -128,7 +128,7 @@
         name: ~  # noqa args[module]
         update_cache: true
       changed_when: false
-      when: not ansible_check_mode
+      when: (not ansible_check_mode) and (openwrt_package_manager == "opkg")
       register: prerequisites_opkg_cache_update
       failed_when:
         - '"False: Unknown package" not in prerequisites_opkg_cache_update.msg'

@@ -1,0 +1,26 @@
+---
+- name: "local_startup_scripts | Create {{ openwrt_scripts_startup_dir }}"
+  ansible.builtin.file:
+    path: "{{ openwrt_scripts_startup_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "u=rwx,g=rx,o="
+
+- name: local_startup_scripts | Copy scripts onto device
+  ansible.builtin.copy:
+    dest: "{{ openwrt_scripts_startup_dir }}/{{ item.key }}.sh"
+    content: |
+      {{ item.value }}
+  loop: "{{ openwrt_scripts_startup | dict2items }}"
+  register: openwrt_scripts_startup_copied
+
+- ansible.builtin.debug:
+    msg: "{{ openwrt_scripts_startup_copied }}"
+
+- name: local_startup_scripts | Copy scripts into rc.local
+  ansible.builtin.lineinfile:
+    path: /etc/rc.local
+    insertbefore: "exit 0"
+    line: ". {{ item.dest }}"
+  loop: "{{ openwrt_scripts_startup_copied.results }}"

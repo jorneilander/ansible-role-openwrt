@@ -1,21 +1,46 @@
 ---
-- name: "packages | Uninstall requested packages"
-  community.general.opkg:
-    name: "{{ item }}"
-    update_cache: false
-    state: absent
-  with_items: "{{ openwrt_uninstalled_packages }}"
-  when: openwrt_uninstalled_packages | length > 0
-  notify: "Reboot device"
 
-- name: "packages | Install requested packages"
-  community.general.opkg:
-    name: "{{ item }}"
-    update_cache: false
-    state: present
-  with_items: "{{ openwrt_installed_packages }}"
-  when: openwrt_installed_packages | length > 0
-  notify: "Reboot device"
+- name: packages | opkg
+  when: openwrt_package_manager == "opkg"
+  block:
+    - name: "packages | Uninstall requested packages"
+      community.openwrt.opkg:
+        name: "{{ item }}"
+        update_cache: false
+        state: absent
+      with_items: "{{ openwrt_uninstalled_packages }}"
+      when: (openwrt_uninstalled_packages | length > 0) and  (openwrt_package_manager == "opkg")
+      notify: "Reboot device"
+
+    - name: "packages | Install requested packages"
+      community.openwrt.opkg:
+        name: "{{ item }}"
+        update_cache: false
+        state: present
+      with_items: "{{ openwrt_installed_packages }}"
+      when: (openwrt_installed_packages | length > 0) and  (openwrt_package_manager == "opkg")
+      notify: "Reboot device"
+
+- name: packages | opkg
+  when: openwrt_package_manager == "apk"
+  block:
+    - name: "packages | Uninstall requested packages"
+      community.openwrt.apk:
+        name: "{{ item }}"
+        update_cache: false
+        state: absent
+      with_items: "{{ openwrt_uninstalled_packages }}"
+      when: (openwrt_uninstalled_packages | length > 0) and  (openwrt_package_manager == "apk")
+      notify: "Reboot device"
+
+    - name: "packages | Install requested packages"
+      community.openwrt.apk:
+        name: "{{ item }}"
+        update_cache: false
+        state: present
+      with_items: "{{ openwrt_installed_packages }}"
+      when: (openwrt_installed_packages | length > 0) and  (openwrt_package_manager == "apk")
+      notify: "Reboot device"
 
 - name: "packages | Upgrade packages"
   when: openwrt_packages_upgrade_enabled | bool

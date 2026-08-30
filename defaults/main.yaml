@@ -12,6 +12,10 @@ openwrt_version_upgrade_owut_force_enabled: false
 openwrt_disabled_services: []
 openwrt_enabled_services: []
 
+# Scripts
+openwrt_scripts_startup_dir: "/root/scripts_startup"
+openwrt_scripts_startup: []
+
 # Packages
 openwrt_packages_upgrade_enabled: true
 openwrt_packages_upgrade_reboot_enabled: true

@@ -2,11 +2,20 @@
 - name: "upgrade_tool | Install OpenWRT Upgrade Tool block"
   block:
     - name: "upgrade_tool | Install requested packages"
-      community.general.opkg:
+      community.openwrt.opkg:
         name: "owut"
         update_cache: false
         state: present
       check_mode: false
+      when: openwrt_package_manager == "opkg"
+
+    - name: "upgrade_tool | Install requested packages"
+      community.openwrt.apk:
+        name: "owut"
+        update_cache: false
+        state: present
+      check_mode: false
+      when: openwrt_package_manager == "apk"
   rescue:
     - name: "upgrade_tool | Get currently installed version"
       check_mode: false
@@ -37,16 +46,41 @@
 
           Please re-run this role with 'openwrt_version_upgrade_owut_enabled: false'
 
-- name: "upgrade_tool | Get installed packages"
-  ansible.builtin.shell:
-    cmd: |
-      set -e errexit
-      set -o pipefail
+# - name: "upgrade_tool | Get installed packages"
+#   ansible.builtin.shell:
+#     cmd: |
+#       set -e errexit
+#       set -o pipefail
 
-      opkg list-installed | awk '{print $1}'
-  register: packages_installed
-  changed_when: false
-  check_mode: false
+#       opkg list-installed | awk '{print $1}'
+#   register: packages_installed
+#   changed_when: false
+#   check_mode: false
+#   when: openwrt_package_manager == "opkg"
+
+# - name: "upgrade_tool | Clear packages_installed"
+#   ansible.builtin.set_fact:
+#     packages_installed: []
+#   when: openwrt_package_manager == "apk"
+
+- name: "upgrade_tool | Get OpenWRT packages"
+  community.openwrt.package_facts:
+  # when: openwrt_package_manager == "apk"
+
+- ansible.builtin.debug:
+    msg: "{{ item.key }}"
+  loop: "{{ ansible_facts['packages'] | dict2items }}"
+
+
+
+- name: "upgrade_tool | Set installed packages fact"
+  ansible.builtin.set_fact:
+    packages_installed: "{{ packages_installed | default([]) + [item.key] }}"
+  loop: "{{ ansible_facts['packages'] | dict2items }}"
+  # when: openwrt_package_manager == "apk"
+
+- ansible.builtin.debug:
+    msg: "{{ packages_installed }}"
 
 - name: "upgrade_tool | Set owut facts"
   ansible.builtin.set_fact:
@@ -55,7 +89,7 @@
     openwrt_owut_packages: >-
       {%- set packages_to_uninstall = [] -%}
       {%- for package_uninstalled in openwrt_uninstalled_packages
-          if package_uninstalled in packages_installed.stdout_lines -%}
+          if package_uninstalled in packages_installed -%}
         {{ packages_to_uninstall.append(package_uninstalled) }}
       {%- endfor -%}
       {%- if openwrt_version_upgrade_owut_force_enabled | bool -%} --force{%- endif -%}
@@ -68,7 +102,7 @@
       set -o errexit
       set -o pipefail
 
-      owut check {{ openwrt_owut_version }} --verbose {{ openwrt_owut_packages }}
+      owut check {{ openwrt_owut_version }} --verbose {{ openwrt_owut_packages }} || true
   check_mode: false
   changed_when: false
   register: owut_check_output
@@ -97,7 +131,7 @@
 
     - name: "upgrade_tool | Upgrade device image"
       ansible.builtin.command:
-        cmd: owut upgrade {{ openwrt_owut_version }} --verbose {{ openwrt_owut_packages }}
+        cmd: owut upgrade {{ openwrt_owut_version }} --verbose {{ openwrt_owut_packages }} --force
       register: openwrt_owut_upgrade_output
       changed_when: true
 
@@ -114,12 +148,20 @@
         delay: 5
         timeout: 600
 
+    # - name: "upgrade_tool | Update opkg cache"
+    #   community.openwrt.opkg:
+    #     name: ~  # noqa args[module]
+    #     update_cache: true
+    #   changed_when: false
+    #   when: (not ansible_check_mode) and (openwrt_package_manager == "opkg")
+    #   register: prerequisites_opkg_cache_update
+    #   failed_when:
+    #     - '"False: Unknown package" not in prerequisites_opkg_cache_update.msg'
+
     - name: "upgrade_tool | Update opkg cache"
-      community.general.opkg:
+      community.openwrt.apk:
         name: ~  # noqa args[module]
         update_cache: true
       changed_when: false
-      when: not ansible_check_mode
-      register: prerequisites_opkg_cache_update
-      failed_when:
-        - '"False: Unknown package" not in prerequisites_opkg_cache_update.msg'
+      when: (not ansible_check_mode) and (openwrt_package_manager == "apk")
+

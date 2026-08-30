@@ -1,28 +1,31 @@
 ---
-- name: "prerequisites | Update opkg cache"
-  community.general.opkg:
-    name: ~  # noqa args[module]
-    update_cache: true
-  changed_when: false
-  check_mode: false
-  when:
-    - openwrt_version != "SNAPSHOT"
-    - openwrt_packages_opkg_update_enabled | bool
-  register: prerequisites_opkg_cache_update
-  failed_when:
-    - '"False: Unknown package" not in prerequisites_opkg_cache_update.msg'
+# - name: "prerequisites | Update opkg cache"
+#   community.general.opkg:
+#     name: ~  # noqa args[module]
+#     update_cache: true
+#   changed_when: false
+#   check_mode: false
+#   when:
+#     - openwrt_version != "SNAPSHOT"
+#     - openwrt_packages_opkg_update_enabled | bool
+#   register: prerequisites_opkg_cache_update
+#   failed_when:
+#     - '"False: Unknown package" not in prerequisites_opkg_cache_update.msg'
 
-- name: "prerequisites | Fail when no facts available"
-  ansible.builtin.fail:
-    msg: "Ensure you run this role in a playbook with 'gather_facts: true'"
-  when: ansible_facts.keys() | length == 0
+# - name: "prerequisites | Fail when no facts available"
+#   ansible.builtin.fail:
+#     msg: "Ensure you run this role in a playbook with 'gather_facts: true'"
+#   when: ansible_facts.keys() | length == 0
 
-- name: "prerequisites | Install role gekmihesg.openwrt"
+- name: "prerequisites | Install role community.openwrt.init"
   community.general.ansible_galaxy_install:
-    type: "role"
-    name: "gekmihesg.openwrt"
+    type: "collection"
+    name: "community.openwrt"
   delegate_to: localhost
 
-- name: "prerequisites | Apply gekmihesg.openwrt role"
+- name: "prerequisites | Apply community.openwrt.init role"
   ansible.builtin.import_role:
-    name: "gekmihesg.openwrt"
+    name: "community.openwrt.init"
+
+- name: "prerequisites | Gather OpenWrt facts"
+  community.openwrt.setup:

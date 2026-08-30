@@ -36,6 +36,12 @@
         - {{ cron_job.name }} - {{ cron_job.job | length }} characters
       {% endfor %}
 
+      # Startup scripts
+      openwrt_scripts_startup:
+      {% for startup_script  in openwrt_scripts_startup | dict2items %}
+        - {{ startup_script.key }} - {{ startup_script.value | length }} characters
+      {% endfor %}
+
       # Other
       openwrt_disk_resize_enabled: "{{ openwrt_disk_resize_enabled | bool }}"
       openwrt_ssh_public_key: {{ openwrt_ssh_public_key }}
@@ -65,7 +71,7 @@
 
 - name: "Add SSH public key"
   ansible.builtin.include_tasks: "ssh_add_keys.yaml"
-  when: openwrt_ssh_public_key
+  when: openwrt_ssh_public_key is not none
 
 - name: "Manage packages"
   ansible.builtin.import_tasks: "packages.yaml"
@@ -77,3 +83,7 @@
 
 - name: "Manage cron jobs"
   ansible.builtin.import_tasks: "cron_jobs.yaml"
+
+- name: "Manage local startup scripts"
+  ansible.builtin.import_tasks: "local_startup_scripts.yaml"
+  when: openwrt_scripts_startup | length >= 1
