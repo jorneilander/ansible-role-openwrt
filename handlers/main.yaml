@@ -3,7 +3,7 @@
   ansible.builtin.include_tasks: "handlers/reboot.yaml"
 
 - name: "Restart cron"
-  ansible.builtin.service:
+  community.openwrt.service:
     name: cron
     state: restarted
     enabled: true

@@ -1,88 +1,29 @@
 ---
+- name: "packages | Uninstall requested packages"
+  community.openwrt.apk:
+    name: "{{ item }}"
+    update_cache: false
+    state: absent
+  with_items: "{{ openwrt_uninstalled_packages }}"
+  when: (openwrt_uninstalled_packages | length > 0) and  (openwrt_package_manager == "apk")
+  notify: "Reboot device"
 
-- name: packages | opkg - Manage packages
-  when: openwrt_package_manager == "opkg"
-  block:
-    - name: "packages | Uninstall requested packages"
-      community.openwrt.opkg:
-        name: "{{ item }}"
-        update_cache: false
-        state: absent
-      with_items: "{{ openwrt_uninstalled_packages }}"
-      when: (openwrt_uninstalled_packages | length > 0) and  (openwrt_package_manager == "opkg")
-      notify: "Reboot device"
+- name: "packages | Install requested packages"
+  community.openwrt.apk:
+    name: "{{ item }}"
+    update_cache: false
+    state: present
+  with_items: "{{ openwrt_installed_packages }}"
+  when: (openwrt_installed_packages | length > 0) and  (openwrt_package_manager == "apk")
+  notify: "Reboot device"
 
-    - name: "packages | Install requested packages"
-      community.openwrt.opkg:
-        name: "{{ item }}"
-        update_cache: false
-        state: present
-      with_items: "{{ openwrt_installed_packages }}"
-      when: (openwrt_installed_packages | length > 0) and  (openwrt_package_manager == "opkg")
-      notify: "Reboot device"
-
-- name: packages | apk - Manage packages
-  when: openwrt_package_manager == "apk"
-  block:
-    - name: "packages | Uninstall requested packages"
-      community.openwrt.apk:
-        name: "{{ item }}"
-        update_cache: false
-        state: absent
-      with_items: "{{ openwrt_uninstalled_packages }}"
-      when: (openwrt_uninstalled_packages | length > 0) and  (openwrt_package_manager == "apk")
-      notify: "Reboot device"
-
-    - name: "packages | Install requested packages"
-      community.openwrt.apk:
-        name: "{{ item }}"
-        update_cache: false
-        state: present
-      with_items: "{{ openwrt_installed_packages }}"
-      when: (openwrt_installed_packages | length > 0) and  (openwrt_package_manager == "apk")
-      notify: "Reboot device"
-
-- name: "packages | opkg - Upgrade packages"
+- name: "packages | Upgrade packages"
   when:
     - openwrt_packages_upgrade_enabled | bool
-    - openwrt_package_manager == "opkg"
   block:
     - name: "packages | Get list of upgradable packages from opkg"
       ansible.builtin.shell:
-        cmd: "opkg list-upgradable 2>/dev/null | awk '{print $1}'"
-      register: openwrt_upgradable_packages_opkg
-      changed_when: false
-      check_mode: false
-
-    - name: "packages | Set list of upgradable packages"
-      ansible.builtin.set_fact:
-        opwrt_upgradable_packages:
-          "{{ openwrt_upgradable_packages_opkg.stdout_lines | map('split', ' ') | map('first') }}"
-      check_mode: false
-
-    - name: "packages | Show list of upgradable packages"
-      ansible.builtin.debug:
-        msg: "{{ opwrt_upgradable_packages }}"
-      check_mode: false
-
-    - name: "packages | Upgrade package"
-      ansible.builtin.command:
-        cmd: "opkg upgrade {{ item | split(' ') | first }}"
-      loop: "{{ opwrt_upgradable_packages }}"
-      when:
-        - item | split(' ') | first not in openwrt_packages_upgrade_excluded
-        - opwrt_upgradable_packages | length > 0
-      changed_when: true
-      notify: "Reboot device"
-
-- name: "packages | apk - Upgrade packages"
-  when:
-    - openwrt_packages_upgrade_enabled | bool
-    - openwrt_package_manager == "apk"
-  block:
-    - name: "packages | Get list of upgradable packages from opkg"
-      ansible.builtin.shell:
-        cmd: "apk list --upgradable 2>/dev/null | awk '{print $1}''"
+        cmd: "set -o pipefail && apk list --upgradable 2>/dev/null | awk '{print $1}'"
       register: openwrt_upgradable_packages_apk
       changed_when: false
       check_mode: false

@@ -1,10 +1,18 @@
 ---
 - name: "ssh_add_keys | Add public key"
-  ansible.builtin.lineinfile:
+  community.openwrt.lineinfile:
     path: "{{ openwrt_dropbear_authorized_keys_path }}"
     create: true
     line: "{{ openwrt_ssh_public_key }}"
     owner: "root"
     group: "root"
     mode: "u=rw,g=,o="
-  no_log: true
+  # no_log: true
+
+# - name: "ssh_add_keys | Add public key using native UCI"
+#   community.openwrt.uci:
+#     command: add
+#     config: system
+#     type: remote_keys
+#     value:
+#       key: "{{ openwrt_ssh_public_key }}"

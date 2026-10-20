@@ -1,10 +1,66 @@
 ---
-- name: "back_up | Create back-up"
-  ansible.builtin.command:
-    cmd: "sysupgrade -b {{ openwrt_back_up_file_path }}"
-    creates: "{{ openwrt_back_up_file_path }}"
+- name: back_up | Stat back-up path
+  community.openwrt.stat:
+    path: "{{ openwrt_back_up_file_path }}"
+  register: openwrt_back_up_file_path_stat
 
-- name: "back_up | Copy backup"
-  ansible.builtin.fetch:
-    dest: "{{ openwrt_back_up_local_dir }}"
-    src: "{{ openwrt_back_up_file_path }}"
+- name: back_up | Stat local back-up path
+  ansible.builtin.stat:
+    path: "{{ openwrt_back_up_local_file_path }}"
+  register: openwrt_back_up_local_file_path_stat
+  delegate_to: localhost
+
+# yamllint disable rule:line-length
+- name: back_up | Inform user about back-up status
+  ansible.builtin.debug:
+    msg: |
+      Device back-up file path: {{ openwrt_back_up_file_path }}
+      Device back-up file size: {{ openwrt_back_up_file_path_stat.stat.size }} bytes
+      Device back-up file age: {{ (ansible_date_time.epoch | int - openwrt_back_up_file_path_stat.stat.mtime) | default('N/A') | int }} seconds
+      Device back-up file checksum: {{ openwrt_back_up_file_path_stat.stat.checksum }}
+      Local back-up file path: {{ openwrt_back_up_local_file_path }}
+      Local back-up file size: {{ openwrt_back_up_local_file_path_stat.stat.size }} bytes
+      Local back-up file age: {{ (ansible_date_time.epoch | int - openwrt_back_up_local_file_path_stat.stat.mtime) | default('N/A') | int }} seconds
+      Local back-up file checksum: {{ openwrt_back_up_local_file_path_stat.stat.checksum }}
+  when: openwrt_back_up_file_path_stat.stat.exists and openwrt_back_up_local_file_path_stat.stat.exists
+# yamllint enable rule:line-length
+
+- name: "back_up | Create back-up"
+  when:
+      # Check if back-up is needed
+    - (not openwrt_back_up_file_path_stat.stat.exists) or
+      (openwrt_back_up_file_path_stat.stat.exists and openwrt_back_up_file_path_stat.stat.size == 0) or
+      (
+        openwrt_back_up_file_path_stat.stat.ctime < (
+          ansible_date_time.epoch | int - openwrt_back_up_file_age | int
+        )
+      )
+      or
+      (not openwrt_back_up_local_file_path_stat.stat.exists) or
+      (
+        openwrt_back_up_local_file_path_stat.stat.exists and openwrt_back_up_local_file_path_stat.stat.size == 0
+      ) or
+      (
+        openwrt_back_up_local_file_path_stat.stat.ctime < (
+          ansible_date_time.epoch | int - openwrt_back_up_file_age | int
+        )
+      )
+      or
+      (openwrt_back_up_local_file_path_stat.stat.checksum != openwrt_back_up_file_path_stat.stat.checksum)
+  block:
+    - name: back_up | Create back-up on device
+      ansible.builtin.raw: "sysupgrade -b {{ openwrt_back_up_file_path }}"
+      changed_when: true
+
+    - name: back_up | Read the file from the device
+      community.openwrt.slurp:
+        src: "{{ openwrt_back_up_file_path }}"
+      register: openwrt_backup_content
+      changed_when: false
+
+    - name: back_up | Save the file on the controller
+      ansible.builtin.copy:
+        content: "{{ openwrt_backup_content.content | b64decode }}"
+        dest: "{{ openwrt_back_up_local_dir }}/{{ openwrt_back_up_file_path | basename }}"
+        mode: "u=rw,g=rw,o="
+      delegate_to: localhost

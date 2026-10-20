@@ -119,8 +119,10 @@ The following (extensive) example shows how to use this role to manage an entire
 <details>
   <summary>Click to show the example</summary>
 
-By leveraging the [`lookup(ansible.builtin.varnames)`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/varnames_lookup.html) plugin we can assemble the lists we need as input for the role execution.
-By concatenating lists ending with a certain string (e.g., `*openwrt_installed_packages`) we can easily manage what gets installed in which (group of) device(s).
+By leveraging the [`lookup(ansible.builtin.varnames)`](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/varnames_lookup.html)
+plugin we can assemble the lists we need as input for the role execution.
+By concatenating lists ending with a certain string (e.g., `*openwrt_installed_packages`) we can easily manage what
+gets installed in which (group of) device(s).
 We only need to be mindful of not re-using variable names.
 In this example all variables for a group have the prefix `group_<group_name>_` to mitigate that issue.
 

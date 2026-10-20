@@ -27,7 +27,9 @@ openwrt_packages_opkg_update_enabled: true
 
 # Back-up
 openwrt_back_up_enabled: true
+openwrt_back_up_file_age: 3600 # Seconds
 openwrt_back_up_local_dir: "{{ undef(hint='Please provide a directory to store your back-ups') }}"
+openwrt_back_up_local_file_path: "{{ openwrt_back_up_local_dir }}/{{ openwrt_back_up_file_path | basename }}"
 
 # Cron jobs
 openwrt_cron_scripts_dir: "/root/cron_scripts"
@@ -40,3 +42,4 @@ openwrt_dns_validation_domain: google.com
 # Other
 openwrt_ssh_public_key: ~
 openwrt_disk_resize_enabled: false
+openwrt_prompt_continue_enabled: true

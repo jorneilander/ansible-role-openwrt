@@ -1,16 +1,20 @@
 ---
 # Ensure services are managed
 - name: "services | Enable services"
-  ansible.builtin.service:
+  community.openwrt.service:
     name: "{{ item }}"
     state: started
     enabled: true
   loop: "{{ openwrt_enabled_services }}"
 
 - name: "services | Disable services"
-  ignore_errors: true
-  ansible.builtin.service:
+  community.openwrt.service:
     name: "{{ item }}"
     state: stopped
     enabled: false
   loop: "{{ openwrt_disabled_services }}"
+  failed_when:
+    - disable_service_result is failed
+    - "'not found' not in (disable_service_result.msg | default('') | lower)"
+    - "'does not exist' not in (disable_service_result.msg | default('') | lower)"
+  register: disable_service_result
