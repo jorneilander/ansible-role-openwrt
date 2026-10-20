@@ -20,7 +20,7 @@
       Device back-up file checksum: {{ openwrt_back_up_file_path_stat.stat.checksum }}
       Local back-up file path: {{ openwrt_back_up_local_file_path }}
       Local back-up file size: {{ openwrt_back_up_local_file_path_stat.stat.size }} bytes
-      Local back-up file age: {{ (ansible_date_time.epoch | int - openwrt_back_up_local_file_path_stat.stat.mtime) | default('N/A') | int }} seconds
+      Local back-up file age: {{ (ansible_date_time.epoch | int - openwrt_back_up_local_file_path_stat.stat.ctime) | default('N/A') | int }} seconds
       Local back-up file checksum: {{ openwrt_back_up_local_file_path_stat.stat.checksum }}
   when: openwrt_back_up_file_path_stat.stat.exists and openwrt_back_up_local_file_path_stat.stat.exists
 # yamllint enable rule:line-length
@@ -61,6 +61,15 @@
     - name: back_up | Save the file on the controller
       ansible.builtin.copy:
         content: "{{ openwrt_backup_content.content | b64decode }}"
-        dest: "{{ openwrt_back_up_local_dir }}/{{ openwrt_back_up_file_path | basename }}"
+        dest: "{{ openwrt_back_up_local_file_path }}"
         mode: "u=rw,g=rw,o="
       delegate_to: localhost
+      register: openwrt_backup_local_file_copy
+
+    - name: back_up | Touch the local back-up file to match the device back-up file timestamp
+      ansible.builtin.file:
+        path: "{{ openwrt_back_up_local_file_path }}"
+        state: touch
+        mode: "u=rw,g=rw,o="
+      delegate_to: localhost
+      when: not openwrt_backup_local_file_copy.changed

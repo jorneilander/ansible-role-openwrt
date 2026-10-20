@@ -57,12 +57,12 @@
 - name: "upgrade_tool | Set owut facts"
   ansible.builtin.set_fact:
     openwrt_owut_version: >-
-      {{- "--version-to " + openwrt_version | lower if openwrt_version != "latest" else "" }}
+      {{- "--version-to " ~ openwrt_version | lower if openwrt_version != "latest" else "" }}
     openwrt_owut_packages: >-
       {%- set packages_to_uninstall = [] -%}
       {%- for package_uninstalled in openwrt_uninstalled_packages
           if package_uninstalled in packages_installed -%}
-        {%- set _ = packages_to_uninstall.append(package_uninstalled) -%}
+        {{ packages_to_uninstall.append(package_uninstalled) }}
       {%- endfor -%}
       {%- if openwrt_version_upgrade_owut_force_enabled | bool -%} --force{%- endif -%}
       {{- ' -a ' + openwrt_installed_packages|join(',') if openwrt_installed_packages|length > 0 else "" }}
