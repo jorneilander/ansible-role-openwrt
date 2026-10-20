@@ -51,19 +51,22 @@
     - name: back_up | Create back-up on device
       ansible.builtin.raw: "sysupgrade -b {{ openwrt_back_up_file_path }}"
       changed_when: true
+      register: openwrt_backup_create
 
-    - name: back_up | Read the file from the device
+    - name: back_up | Read the file from the device # noqa no-handler
       community.openwrt.slurp:
         src: "{{ openwrt_back_up_file_path }}"
       register: openwrt_backup_content
       changed_when: false
+      when: openwrt_backup_create is changed
 
-    - name: back_up | Save the file on the controller
+    - name: back_up | Save the file on the controller # noqa no-handler
       ansible.builtin.copy:
         content: "{{ openwrt_backup_content.content | b64decode }}"
         dest: "{{ openwrt_back_up_local_file_path }}"
         mode: "u=rw,g=rw,o="
       delegate_to: localhost
+      when: openwrt_backup_create is changed
       register: openwrt_backup_local_file_copy
 
     - name: back_up | Touch the local back-up file to match the device back-up file timestamp
@@ -72,4 +75,7 @@
         state: touch
         mode: "u=rw,g=rw,o="
       delegate_to: localhost
-      when: not openwrt_backup_local_file_copy.changed
+      when:
+        - not openwrt_backup_local_file_copy.changed
+        - openwrt_backup_create is changed
+      check_mode: false

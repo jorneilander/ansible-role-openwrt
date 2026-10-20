@@ -80,6 +80,11 @@
       {{ owut_check_output.stdout }}
       {{ owut_check_output.stderr }}
 
+- name: upgrade_tool | Prompt user to continue
+  ansible.builtin.pause:
+    prompt: "[Enter] to continue with the dry run of the upgrade"
+  when: ansible_check_mode
+
 - name: "upgrade_tool | Upgrade image block"
   when:
     - not ansible_check_mode
@@ -106,12 +111,16 @@
         msg: |
           {{ openwrt_owut_upgrade_output }}
 
+    - name: upgrade_tool | Reset device facts
+      ansible.builtin.meta: reset_connection
+      changed_when: false
+
     - name: "upgrade_tool | Wait for device"
       ansible.builtin.wait_for_connection:
         connect_timeout: 10
         sleep: 5
         delay: 5
-        timeout: 600
+        timeout: 60
 
     - name: "upgrade_tool | Update apk cache"
       community.openwrt.apk:
